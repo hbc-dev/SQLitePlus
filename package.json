@@ -1,0 +1,29 @@
+{
+  "name": "sqliteplus",
+  "version": "2.0.0",
+  "description": "A simple SQLite3 async/sync module",
+  "main": "src/Database.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/167BOT/SQLitePlus.git"
+  },
+  "keywords": [
+    "SQLite",
+    "database",
+    "module",
+    "Async",
+    "Sync"
+  ],
+  "author": "167#0353",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/167BOT/AsyncSQLitePlus/issues"
+  },
+  "homepage": "https://github.com/167BOT/AsyncSQLitePlus#readme",
+  "dependencies": {
+    "better-sqlite3-with-prebuilds": "^7.4.3"
+  }
+}
