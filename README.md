@@ -11,7 +11,7 @@ Usa la misma sintaxis que SQLite, con la diferencia que puedes pasar los datos p
 
 **Nota:** _El módulo tiene funciones asíncronas y síncronas. Todas las funciones `async/await` empiezan acaban por `Async`, por ejemplo `insertDataAsync(DB, Options, Data)` y las funciones `sync` simplemente así: `insertData(DB, Options, Data)`_
 
-## Constructor
+# Clase `DatabaseManager(Options, Folders/Paths)`
 | Propiedades | |
 | -- | -- |
 | Options | Opciones para el manejo |
@@ -29,22 +29,79 @@ Usa la misma sintaxis que SQLite, con la diferencia que puedes pasar los datos p
     - .sqlite
     - db.sqlite
 */
-const {Database} = require('sqliteplus');
-const db = new Database({folder: true, memory: true}, 'folder')
+const {DatabaseManager} = require('sqliteplus');
+const db = new DatabaseManager({folder: true, memory: true}, 'testData')
 
 console.log(db)// => Let see the output!
 /*
 Database {
   data: {
     memory: Database {},
-    testData: { data0: Database {}, db: Database {} }
+    folders: {testData: { data0: Database {}, db: Database {} }}
   },
   typesDB: { folder: true, memory: true }
 }
 */
 ```
 
-## insertData(DB, Options, Data)
+## Funciones del constructor
+La clase incluye algunas funciones para poder manejar tus bases de datos de forma práctica y sencilla.
+
+### `addFiles(Files)`
+Añade archivos a tu manejador de bases de datos de forma sencilla.
+| Propiedades | |
+| -- | -- |
+| Files | La ruta de los archivos a añadir
+
+```js
+db.addFiles(`mydb.sqlite`, `sql.sqlite`)// => Succes!
+```
+
+### `addFolders(Folders)`
+Añade carpetas enteras a tu manejador de bases de datos de forma sencilla.
+| Propiedades | |
+| -- | -- |
+| Folders | La ruta de las carpetas a añadir
+```js
+db.addFolders(`allDbs`, `dataTest`)// => Succes!
+```
+
+### `createDB(Path, Name)`
+Crea nuevos archivos de bases de datos de forma sencilla.
+| Propiedades | |
+| -- | -- |
+| Path | La ruta donde quieres guardar el archivo
+| Name | El nombre con el que quieres llamar al archivo
+
+```js
+db.createDB(__dirname, 'mysecondDB')// => Succes!
+
+/*
+    {
+        sucess: true,
+        path: C:\\Users\\xxx\\Desktop\\myProject\\database\\mysencondDB.sqlite
+    }
+*/
+```
+
+# Funciones
+SQLite Plus incluye funciones básicas e intuitivas separadas de la clase `DatabaseManager()`. Aunque se recomienda el uso de estas funciones, es posible usar `better-sqlite3` (el módulo con el que funciona este Database Manager). Aquí se deja un ejemplo de como usar las funciones de `better-sqlite` de forma ajena:
+
+```js
+//with the module functions
+let save = insertData(db.data.folders.testData.db, {
+autoCommand: true,
+rows: 'id, name',
+tableName: 'Users'
+}, [1, 'Alberto'])
+
+//with the better-sqlite3 module
+db.data.folders.testData.db.prepare(`INSERT INTO Users(id, name) VALUES(?, ?)`).run([1, 'Alberto'])
+```
+
+Se recomienda usar estas funciones unicamente cuando algo no haya sido incluido dentro del módulo.
+
+## `insertData(DB, Options, Data)`
 Inserta datos de forma sencilla con objetos (uso de prefijo OBLIGATORIO) o con arreglos.
 Filtra el donde vas a guardar los datos con las opciones de la función.
 
@@ -73,7 +130,7 @@ Filtra el donde vas a guardar los datos con las opciones de la función.
 (async function() {
     //with arrays
 
-    let save = await db.insertDataAsync(db.data.testData.db,
+    let save = await insertDataAsync(db.data.testData.db,
     {
     tableName: 'Users',
     autoCommand: true,
@@ -82,7 +139,7 @@ Filtra el donde vas a guardar los datos con las opciones de la función.
 
     //with objects
 
-    let save = await db.insertDataAsync(db.data.testData.db,
+    let save = await insertDataAsync(db.data.testData.db,
     {
     tableName: 'Users',
     autoCommand: true,
@@ -92,7 +149,7 @@ Filtra el donde vas a guardar los datos con las opciones de la función.
 });
 
     //sync module
-    let save = db.insertData(db.data.testData.db,
+    let save = insertData(db.data.testData.db,
     {
     tableName: 'Users',
     autoCommand: true,
@@ -101,11 +158,11 @@ Filtra el donde vas a guardar los datos con las opciones de la función.
     {$id: 1, $name: 'Juán'});
 
 /*
-    {sucess: true, new: ´{changes: 1, lastInsertRowid: 1}}
+    {sucess: true, new: {changes: 1, lastInsertRowid: 1}}
 */
 ```
 
-## getData(DB, Options, Data)
+## `getData(DB, Options, Data)`
 Obtén datos de forma sencilla con varias formas de filtrar la información mediante las opciones de la función.
 Puedes usar objetos (PREFIJO OBLIGATORIO) o con arreglos.
 
@@ -135,7 +192,7 @@ Puedes usar objetos (PREFIJO OBLIGATORIO) o con arreglos.
 (async function() {
     //get one
 
-    let get = await db.getDataAsync(db.data.testData.db,
+    let get = await getDataAsync(db.data.testData.db,
     {
     type: 'one',
     tableName: 'Users',
@@ -149,7 +206,7 @@ Puedes usar objetos (PREFIJO OBLIGATORIO) o con arreglos.
 
     //get all
 
-    let get = await db.getDataAsync(db.data.testData.db,
+    let get = await getDataAsync(db.data.testData.db,
     {
     type: 'all',
     tableName: 'Users',
@@ -157,7 +214,7 @@ Puedes usar objetos (PREFIJO OBLIGATORIO) o con arreglos.
     }, [])
 });
 
-let get = await.db.getData(db.data.testData.db,
+let get = await getData(db.data.testData.db,
     {
     type: 'all',
     tableName: 'Users',
@@ -172,7 +229,7 @@ let get = await.db.getData(db.data.testData.db,
 */
 ```
 
-## updateData(DB, Options, Data)
+## `updateData(DB, Options, Data)`
 Actualiza datos de forma sencilla con objetos (uso de prefijo OBLIGATORIO) o con arreglos.
 Filtra el donde vas a actualizar los datos con las opciones de la función.
 
@@ -200,7 +257,7 @@ Filtra el donde vas a actualizar los datos con las opciones de la función.
 (async function() {
     //with arrays
 
-    let save = await db.updateDataAsync(db.data.testData.db,
+    let save = await updateDataAsync(db.data.testData.db,
     {
     tableName: 'Users',
     command: 'name=? WHERE name=?',
@@ -209,7 +266,7 @@ Filtra el donde vas a actualizar los datos con las opciones de la función.
 
     //with objects
 
-    let save = await db.updateDataAsync(db.data.testData.db,
+    let save = await updateDataAsync(db.data.testData.db,
     {
     tableName: 'Users',
     command: 'name=$newName WHERE name=$actualName',
@@ -220,7 +277,7 @@ Filtra el donde vas a actualizar los datos con las opciones de la función.
 });
 
 //sync module
-    let save = await db.updateData(db.data.testData.db,
+    let save = await updateData(db.data.testData.db,
     {
     tableName: 'Users',
     command: 'name=$newName WHERE name=$actualName',
@@ -230,6 +287,6 @@ Filtra el donde vas a actualizar los datos con las opciones de la función.
     {$newName: 'Juanma', $actualName: 'Juán'});
 
 /*
-    {sucess: true, new: ´{changes: 0, lastInsertRowid: 1}}
+    {sucess: true, new: {changes: 0, lastInsertRowid: 1}}
 */
 ```

@@ -22,6 +22,8 @@ function loader(options, paths) {
   }
 
   if (options?.file) {
+    loaded['files'] = {}
+
     if (pathway.length < 1) throw new moduleErr('Añade archivos de SQLite')
 
     let array = []
@@ -39,14 +41,16 @@ function loader(options, paths) {
           }
 
           array.forEach(file => {
-              loaded[file.name] = new Database(file.path)
+              loaded.files[file.name] = new Database(file.path)
           });
 
           return loaded
   }
 
   else if (options?.folder) {
-    if (pathway.length < 1) throw new moduleErr('Añade archivos de SQLite')
+    loaded['folders'] = {}
+
+    if (pathway.length < 1) throw new moduleErr('Añade carpetas')
 
       let dir;
       let array = []
@@ -61,7 +65,7 @@ function loader(options, paths) {
       let folderPath = pathway[x]
       let folderName = pathway[x].match(/\w+$/g)
 
-      if (dir.length < 1) throw new moduleErr(`No se ha encontrado ninguna base de datos en la carpeta`)
+      if (dir.filter(x => x.match(/.\w+$/g) == '.sqlite').length < 1) throw new moduleErr(`No se ha encontrado ninguna base de datos en la carpeta`)
       array.push({files: dir.filter(y => y.match(/.\w+$/g) == '.sqlite'), path: folderPath, name: folderName})
     }
 
@@ -75,7 +79,7 @@ function loader(options, paths) {
                 files[fileName] = new Database(object.path+'/'+file)
             });//set the path of folder files
 
-              loaded[object.name] = files
+              loaded.folders[object.name] = files
           });
 
           return loaded

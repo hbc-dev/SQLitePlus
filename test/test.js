@@ -1,19 +1,23 @@
-const {Database} = require('../src/Database.js');
-const db = new Database({memory: true, folder: true}, 'testData');
-console.log(db)
+const {DatabaseManager, insertDataAsync, insertData, getDataAsync, getData, updateDataAsync, updateData} = require('../src/Database.js');
+const db = new DatabaseManager({memory: true, folder: true}, 'testData');
 
-let save = db.insertData(db.data.testData.miloko, {rows: `userid`, objectPrefix: '$', autoCommand: true}, {$id: 10000})
-let update = db.updateData(db.data.testData.miloko, {objectPrefix: `$`, command: `userid=$id WHERE userid=$lastID`, autoCommand: true}, {$id:90, $lastID: 300})
-let get = db.getData(db.data.testData.miloko, {type: 'one', tableName: 'lol', autoCommand: true})
+db.addFiles('./miloka.sqlite')
+db.addFiles('./miloko.sqlite')
+db.addFolders(__dirname)
+db.createDB(__dirname, 'test')
+
+let save = insertData(db.data.folders.testData.miloko, {rows: `userid`, objectPrefix: '$', autoCommand: true}, {$id: 10000})
+let update = updateData(db.data.folders.testData.miloko, {objectPrefix: `$`, command: `userid=$id WHERE userid=$lastID`, autoCommand: true}, {$id:90, $lastID: 300})
+let get = getData(db.data.folders.testData.miloko, {type: 'one', tableName: 'lol', autoCommand: true})
 
 console.log(get)
 console.log(save)
 console.log(update);
 
 (async function() {
-  let save = await db.insertDataAsync(db.data.testData.miloko, {rows: `userid`, objectPrefix: '$', autoCommand: true}, {$id: 10000})
-  let update = await db.updateDataAsync(db.data.testData.miloko, {objectPrefix: `$`, command: `userid=$id WHERE userid=$lastID`, autoCommand: true}, {$id:90, $lastID: 300})
-  let get = await db.getDataAsync(db.data.testData.miloko, {type: 'all', tableName: 'lol', autoCommand: true, rows: 'userid'})
+  let save = await insertDataAsync(db.data.folders.testData.miloko, {rows: `userid`, objectPrefix: '$', autoCommand: true}, {$id: 10000})
+  let update = await updateDataAsync(db.data.folders.testData.miloko, {objectPrefix: `$`, command: `userid=$id WHERE userid=$lastID`, autoCommand: true}, {$id:90, $lastID: 300})
+  let get = await getDataAsync(db.data.folders.testData.miloko, {type: 'all', tableName: 'lol', autoCommand: true, rows: 'userid'})
 
   console.log(get)
   console.log(save)
