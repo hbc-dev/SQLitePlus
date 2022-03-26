@@ -1,10 +1,6 @@
 {
   "name": "sqliteplus",
-<<<<<<< HEAD
-  "version": "2.5.1",
-=======
   "version": "2.6.0",
->>>>>>> 6bd957e (v2.6.0)
   "description": "A simple SQLite3 async/sync module",
   "main": "src/Database.js",
   "scripts": {
