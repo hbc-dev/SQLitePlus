@@ -1,4 +1,4 @@
-const {DatabaseManager, insertDataAsync, insertData, getDataAsync, getData, updateDataAsync, updateData} = require('../src/Database.js');
+const {DatabaseManager, insertDataAsync, insertData, getDataAsync, getData, updateDataAsync, updateData, createTableAsync, createTable} = require('../src/Database.js');
 const db = new DatabaseManager({memory: true, folder: true}, 'testData');
 
 db.addFiles('./miloka.sqlite')
@@ -6,22 +6,26 @@ db.addFiles('./miloko.sqlite')
 db.addFolders(__dirname)
 db.createDB(__dirname, 'test')
 
-let save = insertData(db.data.folders.testData.miloko, {rows: `userid`, objectPrefix: '$', autoCommand: true}, {$id: 10000})
+let save = insertData(db.data.folders.testData.miloko, {rows: `id, name`, objectPrefix: '$', autoCommand: true, tableName: 'Guilds'}, {$id: 10000, $name: 'Fiesta'})
 let update = updateData(db.data.folders.testData.miloko, {objectPrefix: `$`, command: `userid=$id WHERE userid=$lastID`, autoCommand: true}, {$id:90, $lastID: 300})
 let get = getData(db.data.folders.testData.miloko, {type: 'one', tableName: 'lol', autoCommand: true})
+let newTable = createTable(db.data.folders.testData.miloko, 'Emojis', ['id', 'name'], ['INTEGER NOT NULL', 'TEXT DEFAULT myEmoji'])
 
 console.log(get)
 console.log(save)
 console.log(update);
+console.log(newTable);
 
 (async function() {
   let save = await insertDataAsync(db.data.folders.testData.miloko, {rows: `userid`, objectPrefix: '$', autoCommand: true}, {$id: 10000})
   let update = await updateDataAsync(db.data.folders.testData.miloko, {objectPrefix: `$`, command: `userid=$id WHERE userid=$lastID`, autoCommand: true}, {$id:90, $lastID: 300})
   let get = await getDataAsync(db.data.folders.testData.miloko, {type: 'all', tableName: 'lol', autoCommand: true, rows: 'userid'})
+  let newTable = await createTableAsync(db.data.folders.testData.miloko, 'Stickers', ['id', 'name'], ['INTEGER NOT NULL', 'TEXT DEFAULT mySticker'])
 
   console.log(get)
   console.log(save)
   console.log(update)
+  console.log(newTable)
 
 })();
 
@@ -512,4 +516,4 @@ Por aquí te dejo el contacto que le robé a mi creador >:3
 
 
 
-//Adiós mundo
+//Somos lo que hacemos de forma repetida. La excelencia, entonces, no es un acto, sino un hábito

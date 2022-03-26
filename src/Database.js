@@ -6,7 +6,7 @@ const __getTableName = require('./function/__getTablesName.js')
 const __filterData = require('./function/__filterData.js')
 const __addValues = require('./function/__addValues.js')
 const methods = require('./methods/loader.js')
-const {insertDataAsync, insertData, getDataAsync, getData, updateDataAsync, updateData} = require('./methods/functions.js')
+const {insertDataAsync, insertData, getDataAsync, getData, updateDataAsync, updateData, createTableAsync, createTable} = require('./methods/functions.js')
 
 class DatabaseManager {
   constructor(opts = {folder: false, file: false, memory: true}, ...path) {
@@ -52,4 +52,4 @@ class DatabaseManager {
   }
 }
 
-module.exports = {DatabaseManager, insertDataAsync, insertData, getDataAsync, getData, updateDataAsync, updateData}
+module.exports = {DatabaseManager, insertDataAsync, insertData, getDataAsync, getData, updateDataAsync, updateData, createTableAsync, createTable}

@@ -2,6 +2,7 @@ const moduleErr = require('../../utils/moduleErr.js')
 const __getTableName = require('../function/__getTablesName.js')
 const __filterData = require('../function/__filterData.js')
 const __addValues = require('../function/__addValues.js')
+const __tablesValues = require('../function/__tablesValues.js')
 const methods = require('./loader.js')
 
 //ASYNC FUNCTIONS - 🐱‍👤-
@@ -58,6 +59,18 @@ const methods = require('./loader.js')
 
       //RETURN UPDATE DATA
       return methods.async.update(db, data.command, data.data)
+  }
+
+  async function createTableAsync(db = null, name = null, rows = null, typeData = null, opts = {ifnotexists: true}) {
+    if (!db) throw new moduleErr('Añade una base de datos válida')
+    if (!name) throw new moduleErr('Añade un nombre para la tabla')
+    if (!rows) throw new moduleErr('¡Agrega al menos una columna!')
+    if (!Array.isArray(rows)) throw new moduleErr('"rows" debe ser un array')
+    if (!Array.isArray(typeData)) throw new moduleErr('"typeData" debe ser un array')
+
+    let command = `CREATE TABLE`+' '+(opts?.ifnotexists ? `IF NOT EXISTS` : '')+' '+name+' '+`(${__tablesValues(rows, typeData)})`;
+
+    return methods.async.createTable(db, command)
   }
 
 //SYNC FUNCTIONS - 🍃 -
@@ -117,4 +130,16 @@ const methods = require('./loader.js')
     return methods.sync.update(db, data.command, data.data)
 }
 
-module.exports = {insertDataAsync, insertData, getDataAsync, getData, updateDataAsync, updateData}
+  function createTable(db = null, name = null, rows = null, typeData = null, opts = {ifnotexists: true}) {
+    if (!db) throw new moduleErr('Añade una base de datos válida')
+    if (!name) throw new moduleErr('Añade un nombre para la tabla')
+    if (!rows) throw new moduleErr('¡Agrega al menos una columna!')
+    if (!Array.isArray(rows)) throw new moduleErr('"rows" debe ser un array')
+    if (!Array.isArray(typeData)) throw new moduleErr('"typeData" debe ser un array')
+
+    let command = `CREATE TABLE`+' '+(opts?.ifnotexists ? `IF NOT EXISTS` : '')+' '+name+' '+`(${__tablesValues(rows, typeData)})`;
+
+    return methods.sync.createTable(db, command)
+  }
+
+module.exports = {insertDataAsync, insertData, getDataAsync, getData, updateDataAsync, updateData, createTableAsync, createTable}

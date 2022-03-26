@@ -101,6 +101,41 @@ db.data.folders.testData.db.prepare(`INSERT INTO Users(id, name) VALUES(?, ?)`).
 
 Se recomienda usar estas funciones unicamente cuando algo no haya sido incluido dentro del módulo.
 
+## `createTable(DB, tableName, Rows, TypeData, Options)`
+Crea tablas de forma sencilla en una base de datos.
+
+| Propiedades | |
+| -- | --
+DB | La base de datos sobre la que quieres actuar
+tableName | El nombre de la tabla que quieres crear. Recibe un `String`
+Rows | El nombre de las columnas a crear. Recibe un `Array`
+TypeData | El tipo de datos de las columnas. Dentro, puedes colocar el como quieres que se comporten con (por ejemplo) los valores `DEFAULT x` o `NOT NULL`, mira el ejemplo. Recibe un `Array`
+Options | Las opciones de creación de tablas. Recibe un `Object`
+
+| Options | |
+| -- | -- |
+ifnotexists | Crea la tabla SOLO cuando no haya sido creada. Por defecto es `true` y recibe un `Boolean`
+
+```js
+//async module
+(async function() {
+let newTable = await createTableAsync(db.data.testData.db, 'Emojis', ['id', 'name'], [
+'INTEGER NOT NULL',
+'TEXT DEFAULT myEmoji'
+])
+})();
+
+//sync module
+let newTable = createTable(db.data.testData.db, 'Guilds', ['id', 'name'], [
+'INTEGER NOT NULL',
+'TEXT DEFAULT myGuild'
+])
+
+/*
+    {sucess: true, new: {changes: 0, lastInsertRowid: 1}}
+*/
+```
+
 ## `insertData(DB, Options, Data)`
 Inserta datos de forma sencilla con objetos (uso de prefijo OBLIGATORIO) o con arreglos.
 Filtra el donde vas a guardar los datos con las opciones de la función.
@@ -146,7 +181,7 @@ Filtra el donde vas a guardar los datos con las opciones de la función.
     rows: 'id, name'
     },
     {$id: 1, $name: 'Juán'});
-});
+})();
 
     //sync module
     let save = insertData(db.data.testData.db,
@@ -212,7 +247,7 @@ Puedes usar objetos (PREFIJO OBLIGATORIO) o con arreglos.
     tableName: 'Users',
     autoCommand: true
     }, [])
-});
+})();
 
 let get = await getData(db.data.testData.db,
     {
@@ -274,7 +309,7 @@ Filtra el donde vas a actualizar los datos con las opciones de la función.
     objectPrefix: '$'
     },
     {$newName: 'Juanma', $actualName: 'Juán'});
-});
+})();
 
 //sync module
     let save = await updateData(db.data.testData.db,
