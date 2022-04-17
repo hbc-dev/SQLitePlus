@@ -5,13 +5,13 @@ db.src = 'db'//set the actual db
 
 let myDB = db.db
 
-//['Usuarios', {myUser: 90}, true], ['Guilds', {myGuild: 90}, true]
-db.createTables(['Usuarios', {myUser: {name: null, siuu: true}}, true], ['Guilds', {myGuild: 'XD'}, true], ['Test', {myGuild: {name: null, data: {year: 2022, day: undefined}}}, true])
-//myDB.prepare(`INSERT INTO Guilds(myGuild) VALUES(?)`).run(['Hola'])
+//db.setData(['Usuarios', {myUser: 90}, true], ['Guilds', {myGuild: 90}, true])
+//db.createTables(['Usuarios', {myUser: {name: null, siuu: true}}, true], ['Guilds', {myGuild: 'XD'}, true], ['Test', {myGuild: {name: null, data: {year: 2022, day: undefined}}}, true])
+//myDB.prepare(`INSERT INTO Guilds(myGuild) VALUES(?)`).run([JSON.stringify({name: {lol: 'si'}})])
 myDB = myDB.prepare(`PRAGMA table_info(Test)`).get().dflt_value
 
-console.log(JSON.parse(myDB.replace(/^'|'$/gm, '')))
-
+//console.log(JSON.parse(myDB.replace(/^'|'$/gm, '')))
+console.time()
 let myGet = db.get([
   'Guilds',
   {
@@ -24,3 +24,4 @@ let myGet = db.get([
     }
   }
 ])
+console.timeEnd()

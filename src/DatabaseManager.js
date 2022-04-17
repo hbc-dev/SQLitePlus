@@ -71,9 +71,18 @@ class DatabaseManager {
     if (!db) throw new moduleErr('Añade una base de datos sobre la que actuar con "db.src = dbName"')
     let myData = myStament.parseDB((db.prepare(stament.stament).all())).values()
 
-    let raw = object[1]
-    let rawToSimplify = myStament.simplifyData(raw, [])
-    console.log(rawToSimplify.simplify)
+    let raw = [myData, object[1]]
+    let rawToSimplify = [[], myStament.simplifyData(raw[1], []).simplify]
+    let searched = []
+
+    for (let value of raw[0]) {
+      value = myStament.simplifyData(value, []).simplify
+
+      for (let item of value.values()) {
+        rawToSimplify[0].push(item)
+      }
+    }
+    //hacer método de filtraje entre 2 objetos
   }
 
   all(table) {
@@ -107,14 +116,25 @@ class DatabaseManager {
 
     if (!db) throw new moduleErr('Añade una base de datos sobre la que actuar')
     if (object.length < 1) throw new moduleErr('Añade datos para añadir a la base de datos')
-    const defult = myDB.prepare(`PRAGMA table_info(Test)`).get()[0].dflt_value
 
     object.forEach(item => {
       if (!Array.isArray(item)) throw new moduleErr('Los datos se representan en Arrays')
       if (item.length < 2) throw new moduleErr('Datos incompletos')
 
-      const myStament = new Stament(item).create('ADD_DATA')
-      db.prepare(myStament).run()
+      const myStament = new Stament(item),
+            stament = myStament.create('ADD_DATA')
+
+      let defaultData = db.prepare(`PRAGMA table_info(${item[0]})`).get().dflt_value,
+          simplifyData = myStament.simplifyData(item[1], [])
+
+      try {
+        defaultData = JSON.parse(defaultData.replace(/^'|'$/gm, ''))
+      } catch (e) {
+        defaultData = defaultData
+      }
+
+      return//console.log(simplifyData)
+      db.prepare(stament).run()
     });
   }
 }

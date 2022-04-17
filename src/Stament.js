@@ -1,9 +1,9 @@
 const moduleErr = require('../utils/moduleErr.js'),
-types = {
-  object: 'TEXT',
-  string: 'TEXT',
-  number: 'INTEGER'
-}
+      types = {
+        object: 'TEXT',
+        string: 'TEXT',
+        number: 'INTEGER'
+      }
 
 /*
 NEW_TABLE: Crea nuevas tablas en la base de datos
@@ -36,7 +36,7 @@ class Stament {
 
       for (let column of Object.keys(this.data)) {
         data = data+`${column},`
-        final = final+`'${this.convert(JSON.stringify(this.data[column]), 'return')}'`
+        final = final+`'${JSON.stringify(this.data[column])}'`
       }
 
       return base+data.replace(/,$/gm, '')+') '+final.replace(/,$/gm, '')+')'
@@ -90,11 +90,11 @@ class Stament {
       array.push(key)
 
       if (Array.isArray(data[key])) array.push(data[key])
-      else if (typeof data[key] == 'object') array.push('::Object::') && rawData.push([key, data[key], position])
+      else if (typeof data[key] == 'object') array.push('::Object::') && rawData.push([key, data[key], position, key])
       else array.push(data[key])
 
-      if (principalData.length < 1) array.push({position: 0, in: false})
-      else array.push({position: 0, in: false})
+      if (principalData.length < 1) array.push({position: 0, in: false, column: key})
+      else array.push({position: 0, in: false, column: key})
 
       principalData.push(array)
     }
@@ -123,13 +123,39 @@ class Stament {
         let array = [],
             value = item[1][key]
 
-        if (typeof value == 'object' && !Array.isArray(value)) unResolved.push([key, value, item[2]+1]) && resolvedRaw.push([key, '::Object::', {position: item[2], in: item[0]}])
-        else resolvedRaw.push([key, item[1][key], {position: item[2]+1, in: item[0]}])
+        if (typeof value == 'object' && !Array.isArray(value)) unResolved.push([key, value, item[2]+1, item[3]]) && resolvedRaw.push([key, '::Object::', {position: item[2], in: item[0], column: item[3]}])
+        else resolvedRaw.push([key, item[1][key], {position: item[2]+1, in: item[0], column: item[3]}])
       }
     }
 
     return {resolved: resolvedRaw, peding: unResolved}
   }
+
+  filter(db, toSearch) {
+    /*
+      buscar entre 2 arrays. Diferencia entre lo que se pide y lo que tiene
+    */
+  }
 }
 
 module.exports = Stament
+/*Añadir las siguientes funciones:
+  - condition(callback): Es un string. Es una condición pura y dura con sintaxis simple y legible
+  - setFunct(name, callback): Es un string. Transporta varias condiciones a examinar
+  - funct(name): Es un string. Usa una función creada
+
+  Sintaxis:
+  == => Igual
+  != => No igual
+  AND => Y...
+  || => Si es false, examina esto otro...
+  > => Mayor que
+  < => Menor que
+
+  Ejem:
+  "condition(DB.key == myGuild AND DB.position == 0)"
+  "setFunct(myFunction, DB.key != mySticker)"
+  "funct(myFunction)"
+
+  Realmente el signo igual es irrelevante si solo buscas un valor exacto
+*/
