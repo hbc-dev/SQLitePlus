@@ -69,7 +69,7 @@ class DatabaseManager {
     let stament = myStament.create('GET_DATA')
 
     if (!db) throw new moduleErr('Añade una base de datos sobre la que actuar con "db.src = dbName"')
-    let myData = myStament.parseDB((db.prepare(stament.stament).all())).values()
+    let myData = myStament.parseDB(db.prepare(stament.stament).all()).values()
 
     let raw = [myData, object[1]]
     let rawToSimplify = [[], myStament.simplifyData(raw[1], []).simplify]
@@ -82,7 +82,22 @@ class DatabaseManager {
         rawToSimplify[0].push(item)
       }
     }
-    //hacer método de filtraje entre 2 objetos
+
+    //return console.log(rawToSimplify[0])
+
+    for (let value of rawToSimplify[1].values()) {
+      return myStament.filter(value, rawToSimplify[0], searched)
+
+      if (searched.length < 1) {
+        searched = null
+        break;
+      }
+    }
+
+    if (searched) {
+      //console.log(searched)
+      //return searched[0][2].values
+    } else return searched
   }
 
   all(table) {

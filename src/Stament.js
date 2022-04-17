@@ -1,4 +1,5 @@
 const moduleErr = require('../utils/moduleErr.js'),
+      lodashArray = require('lodash')
       types = {
         object: 'TEXT',
         string: 'TEXT',
@@ -75,66 +76,80 @@ class Stament {
   }
 
   simplifyData(data, principalData) {
-    let rawData = [],
-    position;
+  let rawData = [],
+  position;
 
-    try {
-      position = principalData.reduce((prev, current) => prev[2].position > current[2].position ? prev : current)[2].position+1
-    } catch(e) {
-      position = 0
-    }
-
-    for (let key of Object.keys(data)) {
-      let array = []
-
-      array.push(key)
-
-      if (Array.isArray(data[key])) array.push(data[key])
-      else if (typeof data[key] == 'object') array.push('::Object::') && rawData.push([key, data[key], position, key])
-      else array.push(data[key])
-
-      if (principalData.length < 1) array.push({position: 0, in: false, column: key})
-      else array.push({position: 0, in: false, column: key})
-
-      principalData.push(array)
-    }
-
-    if (rawData.length > 0) {
-      for (let i = 0;i<100;i++) {
-        let myUnresolvedData = this.rawDataConvert(rawData)
-        myUnresolvedData.resolved.forEach(item => principalData.push(item))
-
-        rawData = myUnresolvedData.peding
-        if (myUnresolvedData.peding.length < 1) break;
-      }
-    }
-
-    return {simplify: principalData}
+  try {
+    position = principalData.reduce((prev, current) => prev[2].position > current[2].position ? prev : current)[2].position+1
+  } catch(e) {
+    position = 0
   }
+
+  for (let key of Object.keys(data)) {
+    let array = []
+
+    array.push(key)
+
+    if (Array.isArray(data[key])) array.push(data[key])
+    else if (typeof data[key] == 'object') array.push('::Object::') && rawData.push([key, data[key], position, key])
+    else array.push(data[key])
+
+    array.push({position: 0, in: false, column: key, values: data[key]})
+
+    principalData.push(array)
+  }
+
+  if (rawData.length > 0) {
+    for (let i = 0;i<100;i++) {
+      let myUnresolvedData = this.rawDataConvert(rawData)
+      myUnresolvedData.resolved.forEach(item => principalData.push(item))
+
+      rawData = myUnresolvedData.peding
+      if (myUnresolvedData.peding.length < 1) break;
+    }
+  }
+
+  return {simplify: principalData}
+}
 
   rawDataConvert(raw) {
-    let unResolved = [],
-        resolvedRaw = []
+  let unResolved = [],
+      resolvedRaw = []
 
-    for (let item of raw.values()) {
-      let keys = Object.keys(item[1])
+  for (let item of raw.values()) {
+    let keys = Object.keys(item[1])
 
-      for (let key of keys) {
-        let array = [],
-            value = item[1][key]
+    for (let key of keys) {
+      let array = [],
+          value = item[1][key]
 
-        if (typeof value == 'object' && !Array.isArray(value)) unResolved.push([key, value, item[2]+1, item[3]]) && resolvedRaw.push([key, '::Object::', {position: item[2], in: item[0], column: item[3]}])
-        else resolvedRaw.push([key, item[1][key], {position: item[2]+1, in: item[0], column: item[3]}])
-      }
+      if (typeof value == 'object' && !Array.isArray(value)) unResolved.push([key, value, item[2]+1, item[3]]) && resolvedRaw.push([key, '::Object::', {position: item[2], in: item[0], column: item[3]}])
+      else resolvedRaw.push([key, item[1][key], {position: item[2]+1, in: item[0], column: item[3]}])
     }
-
-    return {resolved: resolvedRaw, peding: unResolved}
   }
 
-  filter(db, toSearch) {
+  return {resolved: resolvedRaw, peding: unResolved}
+}
+
+  filter(toSearch, db, myFilteredData) {
     /*
       buscar entre 2 arrays. Diferencia entre lo que se pide y lo que tiene
     */
+
+   let iterable = db.values(),
+       checker = false
+
+    //data => [key, value, {position: Number, in: PositionName, column: Column}]
+
+  for (let data of iterable) {
+    let key = {fromDB: data[0], toSearch: toSearch[0]},
+        value = {fromDB: data[1], toSearch: toSearch[1]},
+        info = {fromDB: data[2], toSearch: toSearch[2]}
+
+        if (lodashArray.isEqual(toSearch, data)) console.log(data[2].values)
+    }
+
+    return !checker ? [] : myFilteredData
   }
 }
 
@@ -151,6 +166,7 @@ module.exports = Stament
   || => Si es false, examina esto otro...
   > => Mayor que
   < => Menor que
+  RegExp => Regex de toda la vida
 
   Ejem:
   "condition(DB.key == myGuild AND DB.position == 0)"

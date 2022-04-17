@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/167BOT/AsyncSQLitePlus#readme",
   "dependencies": {
-    "better-sqlite3-with-prebuilds": "^7.4.3"
+    "better-sqlite3-with-prebuilds": "^7.4.3",
+    "lodash": "^4.17.21"
   }
 }

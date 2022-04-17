@@ -7,7 +7,7 @@ let myDB = db.db
 
 //db.setData(['Usuarios', {myUser: 90}, true], ['Guilds', {myGuild: 90}, true])
 //db.createTables(['Usuarios', {myUser: {name: null, siuu: true}}, true], ['Guilds', {myGuild: 'XD'}, true], ['Test', {myGuild: {name: null, data: {year: 2022, day: undefined}}}, true])
-//myDB.prepare(`INSERT INTO Guilds(myGuild) VALUES(?)`).run([JSON.stringify({name: {lol: 'si'}})])
+//myDB.prepare(`INSERT INTO Guilds(myGuild) VALUES(?)`).run([JSON.stringify({name: 'Jau'})])
 myDB = myDB.prepare(`PRAGMA table_info(Test)`).get().dflt_value
 
 //console.log(JSON.parse(myDB.replace(/^'|'$/gm, '')))
@@ -15,13 +15,9 @@ console.time()
 let myGet = db.get([
   'Guilds',
   {
-    myGuild: {
-      name: 'el rincón del vago',
-      data : {
-        year: 2022,
-        day: 13
-      }
-    }
+    myGuild: {name: 100}
   }
 ])
+
+//console.log(myGet)
 console.timeEnd()
