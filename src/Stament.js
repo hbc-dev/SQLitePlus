@@ -16,6 +16,7 @@ class Stament {
     this.table = data[0]
     this.data = data[1]
     this.rest = data[2]
+    this.idGenerator = 0
   }
 
   create(type) {
@@ -91,12 +92,13 @@ class Stament {
     array.push(key)
 
     if (Array.isArray(data[key])) array.push(data[key])
-    else if (typeof data[key] == 'object') array.push('::Object::') && rawData.push([key, data[key], position, key])
+    else if (typeof data[key] == 'object') array.push('::Object::') && rawData.push([key, data[key], position, key, this.idGenerator])
     else array.push(data[key])
 
-    array.push({position: 0, in: false, column: key, values: data[key]})
+    array.push({position: 0, in: false, column: key, values: data[key], id: this.idGenerator})
 
     principalData.push(array)
+    this.idGenerator++
   }
 
   if (rawData.length > 0) {
@@ -123,8 +125,8 @@ class Stament {
       let array = [],
           value = item[1][key]
 
-      if (typeof value == 'object' && !Array.isArray(value)) unResolved.push([key, value, item[2]+1, item[3]]) && resolvedRaw.push([key, '::Object::', {position: item[2], in: item[0], column: item[3]}])
-      else resolvedRaw.push([key, item[1][key], {position: item[2]+1, in: item[0], column: item[3]}])
+      if (typeof value == 'object' && !Array.isArray(value)) unResolved.push([key, value, item[2]+1, item[3], item[4]]) && resolvedRaw.push([key, '::Object::', {position: item[2], in: item[0], column: item[3], id: item[4]}])
+      else resolvedRaw.push([key, item[1][key], {position: item[2]+1, in: item[0], column: item[3], id: item[4]}])
     }
   }
 
@@ -136,7 +138,7 @@ class Stament {
       buscar entre 2 arrays. Diferencia entre lo que se pide y lo que tiene
     */
 
-   let iterable = db.values(),
+   let iterable = db.filter(x => x[2].position == toSearch[2].position).values(),
        checker = false
 
     //data => [key, value, {position: Number, in: PositionName, column: Column}]
@@ -144,9 +146,28 @@ class Stament {
   for (let data of iterable) {
     let key = {fromDB: data[0], toSearch: toSearch[0]},
         value = {fromDB: data[1], toSearch: toSearch[1]},
-        info = {fromDB: data[2], toSearch: toSearch[2]}
+        info = {fromDB: data[2], toSearch: toSearch[2]},
+        array = {
+          fromDB: [
+            key.fromDB, value.fromDB, {position: info.fromDB.position, in: info.fromDB.in, column: info.fromDB.column}
+          ],
+          toSearch: [
+            key.toSearch, value.toSearch, {position: info.toSearch.position, in: info.toSearch.in, column: info.toSearch.column}
+          ]
+        }
 
-        if (lodashArray.isEqual(toSearch, data)) console.log(data[2].values)
+        if (myFilteredData.length < 1 && lodashArray.isEqual(array.fromDB, array.toSearch)) {
+          myFilteredData.push(data)
+          checker = true
+        } else if (lodashArray.isEqual(array.fromDB, array.toSearch)) {
+          if (info.fromDB.id !== myFilteredData[0][2].id) {
+            //return console.log(db.filter(x => x[2].id == data[2].id && x[2].position == 0)
+            myFilteredData.pop()
+            myFilteredData.push(db.filter(x => x[2].id == data[2].id && x[2].position == 0)[0])
+            checker = true
+            //está casi conseguido, pero por alguna razón retorna los corchetes 🤷‍♀️
+          }
+        }
     }
 
     return !checker ? [] : myFilteredData

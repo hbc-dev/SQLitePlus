@@ -83,10 +83,11 @@ class DatabaseManager {
       }
     }
 
-    //return console.log(rawToSimplify[0])
+    // return console.log(rawToSimplify[1])
 
     for (let value of rawToSimplify[1].values()) {
-      return myStament.filter(value, rawToSimplify[0], searched)
+      searched = myStament.filter(value, rawToSimplify[0], searched)
+      console.log(searched)
 
       if (searched.length < 1) {
         searched = null
@@ -94,9 +95,11 @@ class DatabaseManager {
       }
     }
 
-    if (searched) {
-      //console.log(searched)
-      //return searched[0][2].values
+    if (searched?.length > 0) {
+      let object = {}
+      object[searched[0][0]] = searched[0][2].values
+
+      return object
     } else return searched
   }
 
