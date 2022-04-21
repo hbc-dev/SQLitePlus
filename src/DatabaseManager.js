@@ -128,31 +128,14 @@ class DatabaseManager {
     });
   }
 
-  setData(...object) {
+  insert(...object) {
     let db = this.db
 
     if (!db) throw new moduleErr('Añade una base de datos sobre la que actuar')
     if (object.length < 1) throw new moduleErr('Añade datos para añadir a la base de datos')
 
-    object.forEach(item => {
-      if (!Array.isArray(item)) throw new moduleErr('Los datos se representan en Arrays')
-      if (item.length < 2) throw new moduleErr('Datos incompletos')
-
-      const myStament = new Stament(item),
-            stament = myStament.create('ADD_DATA')
-
-      let defaultData = db.prepare(`PRAGMA table_info(${item[0]})`).get().dflt_value,
-          simplifyData = myStament.simplifyData(item[1], [])
-
-      try {
-        defaultData = JSON.parse(defaultData.replace(/^'|'$/gm, ''))
-      } catch (e) {
-        defaultData = defaultData
-      }
-
-      return//console.log(simplifyData)
-      db.prepare(stament).run()
-    });
+    for ()
+    //la wea mala hay que hacer una wea medio rara, convertimos a simple data y de eso comparamos con el esquema de la db que tiene el usuario
   }
 }
 

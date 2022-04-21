@@ -172,6 +172,10 @@ class Stament {
 
     return !checker ? [] : myFilteredData
   }
+
+  checkConfig(dbConfig, toInsert) {
+    return;
+  }
 }
 
 module.exports = Stament
@@ -181,6 +185,7 @@ module.exports = Stament
   - funct(name): Es un string. Usa una función creada
 
   Sintaxis:
+  ! => No existe
   == => Igual
   != => No igual
   AND => Y...
