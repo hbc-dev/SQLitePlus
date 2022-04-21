@@ -15,7 +15,7 @@ console.time()
 let myGet = db.get([
   'Guilds',
   {
-    myGuild: {name: 'Jau'}
+    myGuild: {name: 'xd'}
   }
 ])
 

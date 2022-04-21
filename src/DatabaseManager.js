@@ -87,7 +87,6 @@ class DatabaseManager {
 
     for (let value of rawToSimplify[1].values()) {
       searched = myStament.filter(value, rawToSimplify[0], searched)
-      console.log(searched)
 
       if (searched.length < 1) {
         searched = null

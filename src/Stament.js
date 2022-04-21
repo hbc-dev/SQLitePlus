@@ -166,7 +166,7 @@ class Stament {
             myFilteredData.push(db.filter(x => x[2].id == data[2].id && x[2].position == 0)[0])
             checker = true
             //está casi conseguido, pero por alguna razón retorna los corchetes 🤷‍♀️
-          }
+          } else checker = true
         }
     }
 
