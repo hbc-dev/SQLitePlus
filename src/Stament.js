@@ -13,10 +13,10 @@ ADD_DATA: Guarda nuevos datos en columnas
 
 class Stament {
   constructor(data) {
-    this.table = data[0]
-    this.data = data[1]
-    this.rest = data[2]
-    this.idGenerator = 0
+    this.table = data[0]//el nombre de la tabla
+    this.data = data[1]//los datos
+    this.rest = data[2]//el resto, pueden ser muchas weas xd
+    this.idGenerator = 0//para generar ids
   }
 
   create(type) {
@@ -107,7 +107,7 @@ class Stament {
       myUnresolvedData.resolved.forEach(item => principalData.push(item))
 
       rawData = myUnresolvedData.peding
-      if (myUnresolvedData.peding.length < 1) break;
+      if (rawData.length < 1) break;
     }
   }
 
@@ -125,7 +125,7 @@ class Stament {
       let array = [],
           value = item[1][key]
 
-      if (typeof value == 'object' && !Array.isArray(value)) unResolved.push([key, value, item[2]+1, item[3], item[4]]) && resolvedRaw.push([key, '::Object::', {position: item[2], in: item[0], column: item[3], id: item[4]}])
+      if (typeof value == 'object' && !Array.isArray(value)) unResolved.push([key, value, item[2]+1, item[3], item[4]]) && resolvedRaw.push([key, '::Object::', {position: item[2]+1, in: item[0], column: item[3], id: item[4]}])
       else resolvedRaw.push([key, item[1][key], {position: item[2]+1, in: item[0], column: item[3], id: item[4]}])
     }
   }

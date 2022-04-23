@@ -101,6 +101,7 @@ class DatabaseManager {
       return object
     } else return searched
   }
+  //debería de agregar un apartado de opciones
 
   all(table) {
   let db = this.db
@@ -128,13 +129,39 @@ class DatabaseManager {
     });
   }
 
-  insert(...object) {
+  insert(object) {
     let db = this.db
 
     if (!db) throw new moduleErr('Añade una base de datos sobre la que actuar')
-    if (object.length < 1) throw new moduleErr('Añade datos para añadir a la base de datos')
+    if (object.length < 1) throw new moduleErr('Faltan datos')
 
-    for ()
+      if (typeof object[0] !== 'string') throw new moduleErr('Se esparaba como nombre de la table un string')
+
+      let myStament = new Stament(object[0], object[1]),
+          pragma = db.prepare(`PRAGMA table_info(${object[0]})`).all(),
+          simplify = myStament.simplifyData(object[1], []).simplify,
+          fatherColumns = simplify.filter(x => x[2].position < 1),
+          stament = myStament.create('ADD_DATA')
+
+      if (pragma.length < 1) throw new moduleErr(`La tabla "${object[0]}" no existe`)
+
+      //.dflt_value
+      for (let data of fatherColumns.values()) {
+          let actualColumn = pragma.filter(x => x.name == data[0])
+
+          if (actualColumn.length < 1) throw new moduleErr(`La columna "${data[0]}" no existe`)
+          //let template = myStament.simplifyData()
+
+          try {
+            actualColumn = JSON.parse(actualColumn[0].dflt_value.replace(/^'|'$/gm, ''))
+            actualColumn = myStament.simplifyData(actualColumn)
+          } catch(e) {
+            console.log(actualColumn)
+            actualColumn = actualColumn[0].dflt_value
+          }
+
+          //al final le hacemos pragma.shift()
+      }
     //la wea mala hay que hacer una wea medio rara, convertimos a simple data y de eso comparamos con el esquema de la db que tiene el usuario
   }
 }
