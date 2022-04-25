@@ -2,7 +2,7 @@ class moduleErr extends Error {
   constructor(err) {
     super()
 
-    this.name = '[SimpleSQLiteJS ERR]'
+    this.name = '[SQLP Error]'
     this.message = err
   }
 }

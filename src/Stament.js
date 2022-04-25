@@ -92,7 +92,7 @@ class Stament {
     array.push(key)
 
     if (Array.isArray(data[key])) array.push(data[key])
-    else if (typeof data[key] == 'object') array.push('::Object::') && rawData.push([key, data[key], position, key, this.idGenerator])
+    else if (typeof data[key] == 'object' && data[key]) array.push('::Object::') && rawData.push([key, data[key], position, key, this.idGenerator])
     else array.push(data[key])
 
     array.push({position: 0, in: false, column: key, values: data[key], id: this.idGenerator})
@@ -111,6 +111,7 @@ class Stament {
     }
   }
 
+  this.idGenerator = 0
   return {simplify: principalData}
 }
 

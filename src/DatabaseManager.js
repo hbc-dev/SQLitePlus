@@ -147,22 +147,23 @@ class DatabaseManager {
 
       //.dflt_value
       for (let data of fatherColumns.values()) {
-          let actualColumn = pragma.filter(x => x.name == data[0])
+          let actualColumn = pragma.filter(x => x.name == data[0]),
+              column;
 
           if (actualColumn.length < 1) throw new moduleErr(`La columna "${data[0]}" no existe`)
+          actualColumn = actualColumn[0].dflt_value.replace(/^'|'$/gm, '')
           //let template = myStament.simplifyData()
 
           try {
-            actualColumn = JSON.parse(actualColumn[0].dflt_value.replace(/^'|'$/gm, ''))
-            actualColumn = myStament.simplifyData(actualColumn)
+            if (typeof JSON.parse(actualColumn) !== 'object') throw new Error('X')
+            column = myStament.simplifyData(JSON.parse(actualColumn), []).simplify
           } catch(e) {
-            console.log(actualColumn)
-            actualColumn = actualColumn[0].dflt_value
+            column = actualColumn
           }
 
+          console.log(column)
           //al final le hacemos pragma.shift()
       }
-    //la wea mala hay que hacer una wea medio rara, convertimos a simple data y de eso comparamos con el esquema de la db que tiene el usuario
   }
 }
 
