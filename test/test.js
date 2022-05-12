@@ -35,32 +35,34 @@ db.createTables([
       }
     },
     true])
-//myDB.prepare(`INSERT INTO Guilds(myGuild) VALUES(?)`).run([JSON.stringify({data: {name: 'Hugo'}})])
+
+//myDB.prepare(`INSERT INTO Guilds(data) VALUES(?)`).run([JSON.stringify({name:'Lol'})])
 
 //console.log(JSON.parse(myDB.replace(/^'|'$/gm, ''))) | A saber para que es esto xd
 
 console.time()
-let insert = db.insert([
-  'Test',
-  {
-    myGuild: {
-      data: {
-        name: 'El rincón del vago'
-        }
-      }
-    }
-  ])
-// let myGet = db.get([
-//   'Guilds',
+// let insert = db.insert([
+//   'Test',
 //   {
 //     myGuild: {
 //       data: {
-//         name: 'Hugo'
+//         name: 'El rincón del vago'
+//         }
 //       }
-//   }
-// }
-// ])
+//     }
+//   ])
+let myGet = db.get([
+  'Guilds',
+  {
+    myGuild: {
+      data: {
+        name: 'Angelina'
+      },
+    data: {name: 'LOL'}
+  }
+}
+])
 
 //let myGet = myDB.prepare(`SELECT * FROM Guilds WHERE myGuild='{"data":{"name":"Hugo"}}'`).get()
-//console.log(myGet)
+console.log(myGet)
 console.timeEnd()

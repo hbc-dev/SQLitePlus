@@ -69,19 +69,20 @@ class DatabaseManager {
     let stament = myStament.create('GET_DATA')
 
     if (!db) throw new moduleErr('Añade una base de datos sobre la que actuar con "db.src = dbName"')
-    let myData = myStament.parseDB(db.prepare(stament.stament).all()).values()
+    let myData = myStament.parseDB(db.prepare(stament.stament).all())
 
     let raw = [myData, object[1]]
     let rawToSimplify = [[], myStament.simplifyData(raw[1], []).simplify]
     let searched = []
 
     for (let value of raw[0]) {
-      value = myStament.simplifyData(value, []).simplify
+      value = myStament.simplifyData(value, [], {clearIDs: false}).simplify
 
       for (let item of value.values()) {
         rawToSimplify[0].push(item)
       }
     }
+    myStament.clearIDs()
 
     // return console.log(rawToSimplify[1])
 
@@ -165,6 +166,27 @@ class DatabaseManager {
           //al final le hacemos pragma.shift()
       }
   }
+
+  // test() {
+  //   let my = new Stament(['Guilds',
+  //     {
+  //       myGuild: {
+  //         data: {
+  //           name: 'Angelina'
+  //         }
+  //     },
+  //     hola: 'XD'
+  //   }])
+  //
+  //   console.log(my.simplifyData({
+  //     myGuild: {
+  //       data: {
+  //         name: 'Angelina'
+  //       }
+  //   },
+  //   hola: {data: 'xd'}
+  // }, []).simplify)
+  // }
 }
 
 module.exports = DatabaseManager

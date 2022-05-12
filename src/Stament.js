@@ -55,28 +55,40 @@ class Stament {
   }
 
   parseDB(db) {
-    let myResultDB = []
+    let myResultDB = [],
+        group = {},
+        count = 0,
+        iterable,
+        keys = [],
+        key;
 
     for (let object of db.values()) {
-      for (let key of Object.keys(object)) {
-        try {
-          let toObject = {}
-          toObject[key] = JSON.parse(object[key])
+      iterable = Object.keys(object)
+      count = iterable.length
+      keys.push(...iterable)
 
-          myResultDB.push(toObject)
-        } catch (e) {
-          let toObject = {}
-          toObject[key] = object[key]
+        for (count;count>=1;count--) {
+          key = keys[0]
 
-          myResultDB.push(toObject)
+          try {
+              group[key] = JSON.parse(object[key])
+              //console.log(object[key])
+          } catch (e) {
+              group[key] = object[key]
+          }
+
+          keys.shift()
         }
+
+        myResultDB.push(group)
+        group = {}
       }
-    }
 
     return myResultDB
   }
 
-  simplifyData(data, principalData) {
+  simplifyData(data, principalData, {clearIDs=true, groups=true} = {}) {
+    //hay que hacer agrupaciones para que los id sean iguales
   let rawData = [],
   position;
 
@@ -111,11 +123,11 @@ class Stament {
     }
   }
 
-  this.idGenerator = 0
+  if (clearIDs) this.idGenerator = 0
   return {simplify: principalData}
 }
 
-  rawDataConvert(raw) {
+  rawDataConvert(raw, groups) {
   let unResolved = [],
       resolvedRaw = []
 
@@ -167,15 +179,18 @@ class Stament {
             myFilteredData.push(db.filter(x => x[2].id == data[2].id && x[2].position == 0)[0])
             checker = true
             //está casi conseguido, pero por alguna razón retorna los corchetes 🤷‍♀️
-          } else checker = true
+          } else {
+            checker = true
+            myFilteredData.push(db.filter(x => x[2].id == data[2].id && x[2].position == 0)[0])
+          }
         }
     }
 
     return !checker ? [] : myFilteredData
   }
 
-  checkConfig(dbConfig, toInsert) {
-    return;
+  clearIDs() {
+    this.idGenerator = 0
   }
 }
 
