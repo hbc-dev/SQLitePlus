@@ -110,7 +110,7 @@ class Stament {
     array.push({position: 0, in: false, column: key, values: data[key], id: this.idGenerator})
 
     principalData.push(array)
-    this.idGenerator++
+    if (!groups) this.idGenerator++
   }
 
   if (rawData.length > 0) {
@@ -123,8 +123,9 @@ class Stament {
     }
   }
 
-  if (clearIDs) this.idGenerator = 0
-  return {simplify: principalData}
+  if (clearIDs) this.idGenerator = 0;
+  else if (groups) this.idGenerator++
+  return {simplify: principalData, nextID: this.idGenerator}
 }
 
   rawDataConvert(raw, groups) {
@@ -152,7 +153,8 @@ class Stament {
     */
 
    let iterable = db.filter(x => x[2].position == toSearch[2].position).values(),
-       checker = false
+       checker = false,
+       coincidences = []
 
     //data => [key, value, {position: Number, in: PositionName, column: Column}]
 
@@ -169,28 +171,26 @@ class Stament {
           ]
         }
 
-        if (myFilteredData.length < 1 && lodashArray.isEqual(array.fromDB, array.toSearch)) {
-          myFilteredData.push(data)
-          checker = true
-        } else if (lodashArray.isEqual(array.fromDB, array.toSearch)) {
-          if (info.fromDB.id !== myFilteredData[0][2].id) {
-            //return console.log(db.filter(x => x[2].id == data[2].id && x[2].position == 0)
-            myFilteredData.pop()
-            myFilteredData.push(db.filter(x => x[2].id == data[2].id && x[2].position == 0)[0])
-            checker = true
-            //está casi conseguido, pero por alguna razón retorna los corchetes 🤷‍♀️
-          } else {
-            checker = true
-            myFilteredData.push(db.filter(x => x[2].id == data[2].id && x[2].position == 0)[0])
-          }
+        if (lodashArray.isEqual(array.fromDB, array.toSearch)) {
+            if (myFilteredData.length < 1) myFilteredData.push(data)
+            else coincidences.push(info.fromDB.id)
+
+            //console.log(data)
         }
     }
 
+    if (myFilteredData.length > 0) myFilteredData = myFilteredData.filter(x => x[2].id == )
+    //mete las coincidencias de id y luego mete todo allí y se crea como un filtro raro tipo
+    /*
+      coincidencias: 1, 3, 9
+      pues mete ahí todo el contenido que hay en los id 1, 3 y 9 sacando todo lo que no sea eso.
+      Ya cuando termina todo, retorna un objeto solo dentro de un array por ejemplo, ezz
+     */
     return !checker ? [] : myFilteredData
   }
 
-  clearIDs() {
-    this.idGenerator = 0
+  clearIDs(id) {
+    this.idGenerator = id ?? 0;
   }
 }
 

@@ -75,16 +75,17 @@ class DatabaseManager {
     let rawToSimplify = [[], myStament.simplifyData(raw[1], []).simplify]
     let searched = []
 
+    //return console.log(rawToSimplify[1])
+
     for (let value of raw[0]) {
-      value = myStament.simplifyData(value, [], {clearIDs: false}).simplify
+      value = myStament.simplifyData(value, [], {clearIDs: false, groups: true}).simplify
 
       for (let item of value.values()) {
         rawToSimplify[0].push(item)
       }
     }
-    myStament.clearIDs()
 
-    // return console.log(rawToSimplify[1])
+    myStament.clearIDs()
 
     for (let value of rawToSimplify[1].values()) {
       searched = myStament.filter(value, rawToSimplify[0], searched)
@@ -98,6 +99,7 @@ class DatabaseManager {
     if (searched?.length > 0) {
       let object = {}
       object[searched[0][0]] = searched[0][2].values
+      //console.log(searched)
 
       return object
     } else return searched
