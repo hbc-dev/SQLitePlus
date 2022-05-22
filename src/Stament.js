@@ -154,7 +154,7 @@ class Stament {
 
    let iterable = db.filter(x => x[2].position == toSearch[2].position).values(),
        checker = false,
-       coincidences = []
+       coincidences = [];
 
     //data => [key, value, {position: Number, in: PositionName, column: Column}]
 
@@ -172,21 +172,26 @@ class Stament {
         }
 
         if (lodashArray.isEqual(array.fromDB, array.toSearch)) {
-            if (myFilteredData.length < 1) myFilteredData.push(data)
-            else coincidences.push(info.fromDB.id)
-
-            //console.log(data)
-        }
+        coincidences.push(info.fromDB.id)
+        checker = true
     }
+  }
 
-    if (myFilteredData.length > 0) myFilteredData = myFilteredData.filter(x => x[2].id == )
+  myFilteredData = []
+  myFilteredData.push(
+    ...db.filter(x => coincidences.includes(x[2].id))
+  )
+
     //mete las coincidencias de id y luego mete todo allí y se crea como un filtro raro tipo
     /*
       coincidencias: 1, 3, 9
       pues mete ahí todo el contenido que hay en los id 1, 3 y 9 sacando todo lo que no sea eso.
       Ya cuando termina todo, retorna un objeto solo dentro de un array por ejemplo, ezz
      */
-    return !checker ? [] : myFilteredData
+    return {
+      data: !checker ? [] : myFilteredData,
+      repeat: coincidences.length > 1 ? true : false
+    };
   }
 
   clearIDs(id) {

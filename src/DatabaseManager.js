@@ -89,17 +89,25 @@ class DatabaseManager {
 
     for (let value of rawToSimplify[1].values()) {
       searched = myStament.filter(value, rawToSimplify[0], searched)
+      rawToSimplify[0] = searched.data
 
-      if (searched.length < 1) {
+      if (searched.data.length < 1) {
         searched = null
         break;
       }
     }
 
-    if (searched?.length > 0) {
+    if (searched?.data.length > 0) {
       let object = {}
-      object[searched[0][0]] = searched[0][2].values
-      //console.log(searched)
+
+      if (searched.repeat) {
+        let id = searched.data[0][2].id
+        searched = searched.data.filter(x => x[2].id == id)
+      } else searched = searched.data
+
+      for (let data of searched.filter(x => x[2].values).values()) {
+        object[data[0]] = data[2].values
+      }
 
       return object
     } else return searched
