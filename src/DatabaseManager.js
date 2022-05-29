@@ -4,6 +4,7 @@ const loader = require('./functions/loader.js')
 const searcher = require('./functions/searcher')
 const moduleErr = require('../utils/moduleErr.js')
 const Stament = require('./Stament.js')
+const searchConfig = require('./functions/config.js')
 
 class DatabaseManager {
   constructor(opts = {folder: false, file: false, memory: true}, ...path) {
@@ -12,6 +13,7 @@ class DatabaseManager {
     this.data = loaded.memory ?? null;
     this.folders = loaded.folders ?? null;
     this.files = loaded.files ?? null;
+    console.log()
 
     if (opts.folder && opts.file) opts = {file: true, memory: opts.memory}//settings...
     let getTypes = Object.values(opts)
@@ -115,15 +117,15 @@ class DatabaseManager {
   //debería de agregar un apartado de opciones
 
   all(table) {
-  let db = this.db
-  const myStament = new Stament(table)
-  let stament = myStament.create('GET_DATA')
+    let db = this.db
+    const myStament = new Stament(table)
+    let stament = myStament.create('GET_DATA')
 
-  if (!db) throw new moduleErr('Añade una base de datos sobre la que actuar con "db.src = dbName"')
-  let myData = db.prepare(stament.stament).all()
+    if (!db) throw new moduleErr('Añade una base de datos sobre la que actuar con "db.src = dbName"')
+    let myData = db.prepare(stament.stament).all()
 
-  return myStament.parseDB(myData)
-}
+    return myStament.parseDB(myData)
+  }
 
   createTables(...object) {
     let db = this.db
@@ -135,6 +137,8 @@ class DatabaseManager {
       if (!Array.isArray(item)) throw new moduleErr('Las tablas se representan en Arrays')
       if (item.length < 2) throw new moduleErr('Datos de la tabla incompletos')
 
+      //{createIfNotExists, types}
+      //tengo que crear los types, me he quedado por aquí, ve haciendo el readme vago de mierda
       const myStament = new Stament(item).create('NEW_TABLE')
       let data = db.prepare(myStament).run()
     });
@@ -176,27 +180,6 @@ class DatabaseManager {
           //al final le hacemos pragma.shift()
       }
   }
-
-  // test() {
-  //   let my = new Stament(['Guilds',
-  //     {
-  //       myGuild: {
-  //         data: {
-  //           name: 'Angelina'
-  //         }
-  //     },
-  //     hola: 'XD'
-  //   }])
-  //
-  //   console.log(my.simplifyData({
-  //     myGuild: {
-  //       data: {
-  //         name: 'Angelina'
-  //       }
-  //   },
-  //   hola: {data: 'xd'}
-  // }, []).simplify)
-  // }
 }
 
 module.exports = DatabaseManager
