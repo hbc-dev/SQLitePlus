@@ -11,14 +11,22 @@ class DatabaseManager {
   #configData
 
   constructor(opts = {folder: false, file: false, memory: true}, ...path) {
-    const loaded = loader(opts, path)//Load db files. Default collecting files
+    this.#configData = !opts.configPath ? false : searchConfig(opts.configPath)
+    const loaded = loader(opts, path, this.#configData)//Load db files. Default collecting files
 
     this.data = loaded.memory ?? null;
     this.folders = loaded.folders ?? null;
     this.files = loaded.files ?? null;
-    this.#configData = !opts.configPath ? false : searchConfig(opts.configPath)
 
     if (opts.folder && opts.file) opts = {file: true, memory: opts.memory}//settings...
+
+    this.Types = {
+      STRING: '<SQLP:STRING:t>',
+      NUMBER: '<SQLP:NUMBER:t>',
+      BOOLEAN: '<SQLP:BOOLEAN:t>',
+      ARRAY: '<SQLP:ARRAY:t>',
+      OBJECT: '<SQLP:OBJECT:t>'
+    }
 
     this.db;
   }
@@ -127,7 +135,8 @@ class DatabaseManager {
   }
 
   createTables(...object) {
-    let db = this.db
+    let db = this.db,
+        config = this.#configData
 
     if (!db) throw new moduleErr('Añade una base de datos sobre la que actuar')
     if (object.length < 1) throw new moduleErr('Añade tablas para añadir a la base de datos')

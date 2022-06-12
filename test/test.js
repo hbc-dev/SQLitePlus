@@ -2,6 +2,7 @@ const DatabaseManager = require('../src/DatabaseManager'),
       Models = require('./models.js')
 
 const db = new DatabaseManager({file: true, configPath: './config.js'}, 'db.sqlite')
+
 db.src = 'db'//set the actual db
 
 let myDB = db.db
@@ -25,10 +26,7 @@ db.createTables(...Models)
 let myGet = db.get([
   'Guilds',
   {
-    myGuild: {data: {name: 'Angelina'}},
-    data: {
-      name: 'LOL'
-    }
+   data: {name: 'Lol'},
 }
 ])
 

@@ -3,7 +3,7 @@ const fs = require('fs')
 const moduleErr = require('../../utils/moduleErr.js')
 const Database = require('better-sqlite3-with-prebuilds')
 
-function loader(options, paths) {
+function loader(options, paths, config) {
   const pathway = {}
   const loaded = {}
 
@@ -32,7 +32,8 @@ function loader(options, paths) {
             try {
               fs.readFileSync(pathway[x])
             } catch(err) {
-              throw new moduleErr(`Ha habido un error al acceder a los archivos. Error completo:\n${err.message}`)
+              if (config[x]?.createIfNotExists) fs.writeFileSync(pathway[x], '')
+              else throw new moduleErr(`Ha habido un error al acceder a los archivos. Error completo:\n${err.message}`)
             }
 
             if (pathway[x].match(/.\w+$/g)[0] !== '.sqlite') throw new moduleErr(`Ha sido cargado un archivo que no es sqlite: ${pathway[x]}`)
@@ -84,6 +85,7 @@ function loader(options, paths) {
 
           return loaded
     }
+
   return loaded
 }
 

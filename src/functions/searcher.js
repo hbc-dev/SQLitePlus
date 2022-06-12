@@ -16,7 +16,7 @@ function searcher(name, folders, files) {
   } else {
 
     if (!files) throw new moduleErr(`No hay archivos cargados`)
-    if (!files[db]) throw new moduleErr(`La base de datos ${files[db]} no existe o no está cargada`)
+    if (!files[db]) throw new moduleErr(`La base de datos "${db}" no existe o no está cargada`)
 
     return files[db]
   }

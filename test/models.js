@@ -5,8 +5,7 @@ const Model = [
     myUser: {
       name: null, siuu: true
     }
-  },
-    true],
+  }],
   [
     'Guilds',
     {
@@ -14,8 +13,7 @@ const Model = [
       data: {
         name: 'LOL'
       }
-    },
-    true],
+    }],
   [
     'Test',
     {
@@ -26,8 +24,7 @@ const Model = [
           day: undefined
         }
       }
-    },
-    true]
+    }]
 ]
 
 /*

@@ -4,6 +4,37 @@ module.exports = {
   db: {
     createIfNotExists: true,
     types: false,
+    models: [
+    [
+      'Usuarios',
+    {
+      myUser: {
+        name: null, siuu: true
+      }
+    }
+  ],
+  [
+    'Guilds',
+    {
+      myGuild: 'XD',
+      data: {
+        name: 'LOL'
+      }
+    },
+  ],
+  [
+    'Test',
+    {
+      myGuild: {
+        name: null,
+        data: {
+          year: 2022,
+          day: undefined
+        }
+      }
+    }
+  ]
+  ]
   }
 }
 

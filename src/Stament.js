@@ -4,6 +4,11 @@ const moduleErr = require('../utils/moduleErr.js'),
         object: 'TEXT',
         string: 'TEXT',
         number: 'INTEGER'
+      },
+      defaultConfig = {
+        createIfNotExists: true,
+        types: false,
+        followModel: true,
       }
 
 /*
@@ -21,7 +26,7 @@ class Stament {
 
   create(type) {
     if (type == 'NEW_TABLE') {
-      let base = `CREATE TABLE ${this.rest ? 'IF NOT EXISTS' : ''} ${this.table}(`//la base de la sentencia de sql
+      let base = `CREATE TABLE ${!this.rest?.createIfNotExists ? 'IF NOT EXISTS' : ''} ${this.table}(`//la base de la sentencia de sql
 
       for (let column of Object.keys(this.data)) {
         if (typeof this.data !== 'object') base = base+`${column} ${types[typeof this.data]} DEFAULT ${this.data},`
