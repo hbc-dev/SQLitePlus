@@ -1,12 +1,10 @@
 const DatabaseManager = require('../src/DatabaseManager'),
       Models = require('./models.js')
 
-const db = new DatabaseManager({file: true}, `db.sqlite`)
-//console.log(db)
+const db = new DatabaseManager({file: true, configPath: './config.js'}, 'db.sqlite')
 db.src = 'db'//set the actual db
 
 let myDB = db.db
-//db.setData(['Usuarios', {myUser: 90}, true], ['Guilds', {myGuild: 90}, true])
 db.createTables(...Models)
 
 //myDB.prepare(`INSERT INTO Guilds(data) VALUES(?)`).run([JSON.stringify({name:'Lol'})])

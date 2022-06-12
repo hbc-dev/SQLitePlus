@@ -1,29 +1,32 @@
 const moduleErr = require('../../utils/moduleErr.js')
 
-function searcher(name, ...data) {
-  data = data.filter(x => x)
-  let filter = [
-    'name',
-    'open',
-    'inTransaction',
-    'readonly',
-    'memory'
-  ]
+function searcher(name, folders, files) {
+  let folder = name.match(/[^\/]+/),
+      db = name.match(/[^\/]+$/)
 
-  data.forEach((item, i) => {//los objetos con las bases de datos
+  if (folder && name.split('').includes('/')) {
+    if (!folders) throw new moduleErr('No hay carpetas cargadas')
+    if (!folders[folder]) throw new moduleErr(`La carpeta ${folder} no existe o no está cargada`)
 
-    for (let x of Object.keys(item)) {
-      if (x == name) return data = item[x]//para archivitos
-      if (filter.some(x => x !== item[x])) {//para las carpetas
-        //falta filtrar un par de cosas para que no se cuelen los objetos de las bases de datos reales
-        for (let y of Object.keys(item[x])) {
-          if (y == name) return data = item[x][y]
-        }
-      } else return data = null
-    }
-  });
+    folder = folders[folder]
 
-  return (Array.isArray(data) ? null : data)
+    if (!folder[db]) throw new moduleErr(`La base de datos ${folder[db]} no existe o no está cargada`)
+
+    return folder[db]
+  } else {
+
+    if (!files) throw new moduleErr(`No hay archivos cargados`)
+    if (!files[db]) throw new moduleErr(`La base de datos ${files[db]} no existe o no está cargada`)
+
+    return files[db]
+  }
 }
 
 module.exports = searcher
+/*
+
+Sintaxis:
+
+db.src = db
+db.src = proyect/db
+ */

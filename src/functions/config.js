@@ -1,17 +1,11 @@
 const path = require('path')
 const fs = require('fs')
 const moduleErr = require('../../utils/moduleErr.js')
+const model = require('../../utils/model.js')
 
 function searchConfig(directory) {
   //para buscar el archivo de configuración de las bases de datos
   if (!directory) return null
-  // console.time()
-  // console.log(process.cwd())
-  // console.timeEnd()
-  //
-  // console.time()
-  // console.log(__dirname)
-  // console.timeEnd()
   directory = path.resolve(directory)
 
 
@@ -19,7 +13,9 @@ function searchConfig(directory) {
   else if (!directory.endsWith('.js')) throw new moduleErr('Solo se aceptan archivos JavaScript')
 
   directory = require(directory)
-  return directory
+  if (typeof directory !== 'object') throw new moduleErr('La configuración es un objeto')
+
+  return Object.assign(model, directory)
 }
 
 module.exports = searchConfig
