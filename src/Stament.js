@@ -14,6 +14,7 @@ const moduleErr = require('../utils/moduleErr.js'),
 /*
 NEW_TABLE: Crea nuevas tablas en la base de datos
 ADD_DATA: Guarda nuevos datos en columnas
+GET_DATA: Busca datos en las columnas
 */
 
 class Stament {
@@ -29,8 +30,8 @@ class Stament {
       let base = `CREATE TABLE ${!this.rest?.createIfNotExists ? 'IF NOT EXISTS' : ''} ${this.table}(`//la base de la sentencia de sql
 
       for (let column of Object.keys(this.data)) {
-        if (typeof this.data !== 'object') base = base+`${column} ${types[typeof this.data]} DEFAULT ${this.data},`
-        else base = base+`${column} ${types[typeof this.data[column]]} DEFAULT '${JSON.stringify(this.data[column])}',`
+        if (typeof this.data !== 'object') base = base+`${column} ${types[typeof this.data] || 'BLOB'} DEFAULT ${this.data},`
+        else base = base+`${column} ${types[typeof this.data[column]] || 'BLOB'} DEFAULT '${JSON.stringify(this.data[column])}',`
       }
 
       return base.replace(/,$/gm, '')+')'

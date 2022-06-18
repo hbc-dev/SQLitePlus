@@ -5,6 +5,7 @@ const searcher = require('./functions/searcher')
 const moduleErr = require('../utils/moduleErr.js')
 const Stament = require('./Stament.js')
 const searchConfig = require('./functions/config.js')
+const reloadDatabase = require('./functions/reloadDatabase.js')
 
 class DatabaseManager {
   //private
@@ -19,14 +20,6 @@ class DatabaseManager {
     this.files = loaded.files ?? null;
 
     if (opts.folder && opts.file) opts = {file: true, memory: opts.memory}//settings...
-
-    this.Types = {
-      STRING: '<SQLP:STRING:t>',
-      NUMBER: '<SQLP:NUMBER:t>',
-      BOOLEAN: '<SQLP:BOOLEAN:t>',
-      ARRAY: '<SQLP:ARRAY:t>',
-      OBJECT: '<SQLP:OBJECT:t>'
-    }
 
     this.db;
   }
@@ -67,11 +60,44 @@ class DatabaseManager {
 
   //BASE DE DATOS
   set src(name) {
+    //si this.db es igual a :memory: que directamente pongamos el this.data
     if (!name) throw new moduleErr('Añade el nombre de la base de datos a usar')
     if (name.toLowerCase() == ':memory:') return this.db = this.data
 
     const searched = searcher(name, this.folders, this.files)
     this.db = searched
+  }
+
+  close({time = null, db = null} = {}) {
+    db = db ? searcher(db, this.folders, this.files) : this.db;
+    if (!db) throw new moduleErr('No hay ninguna base de datos elegida para cerrar')
+
+    db.close()
+
+    time = Number(time)
+    if (time) {
+      setTimeout(() => {
+        db = reloadDatabase(db)
+        if (db.inFolder) this.folders[db.inFolder][db.fileName] = db
+        else this.files[db.fileName] = db
+
+        this.db = db
+      }, time)
+    }
+  }
+
+  open({time = null, db = null} = {}) {
+    db = db ? searcher(db, this.folders, this.files) : this.db
+    if (!db) throw new moduleErr('No hay ninguna base de datos elegida para cerrar')
+
+    db.open(true)
+
+    time = Number(time)
+    if (time) {
+      setTimeout(() => {
+        db.close()
+      }, time)
+    }
   }
 
   get(object) {

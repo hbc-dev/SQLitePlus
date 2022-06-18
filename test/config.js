@@ -46,7 +46,7 @@ module.exports = {
 
     dbName: {
       createIfNotExists: Boolean, // si quieres crear la db si no existe
-      types: Boolean, // si quieres que tenga type fuerte o debil
+      strongType: Boolean, // si quieres que tenga type fuerte
       open: Boolean, // si quieres cerrar o no las transiciones a la base de datos
       models: Array, // el modelo que tendrá la base de datos
       followModel: Boolean, // si quieres seguir los modelos o no

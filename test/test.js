@@ -1,11 +1,14 @@
 const DatabaseManager = require('../src/DatabaseManager'),
       Models = require('./models.js')
 
-const db = new DatabaseManager({file: true, configPath: './config.js'}, 'db.sqlite')
+const db = new DatabaseManager({folder: true, configPath: './config.js'}, '.')
 
-db.src = 'db'//set the actual db
+db.src = 'test/db'//set the actual db
 
 let myDB = db.db
+db.close({time: 5000})
+setTimeout(() => {console.log(db, myDB)}, 7000)
+return //console.log(db.folders)
 db.createTables(...Models)
 
 //myDB.prepare(`INSERT INTO Guilds(data) VALUES(?)`).run([JSON.stringify({name:'Lol'})])

@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 const moduleErr = require('../../utils/moduleErr.js')
-const Database = require('better-sqlite3-with-prebuilds')
+const Database = require('../PropertiesExtension.js')
 
 function loader(options, paths, config) {
   const pathway = {}
@@ -43,6 +43,9 @@ function loader(options, paths, config) {
 
           array.forEach(file => {
               loaded.files[file.name] = new Database(file.path)
+              loaded.files[file.name].inFolder = false
+              loaded.files[file.name].fileName = file.name
+              loaded.files[file.name].Path = file.path
           });
 
           return loaded
@@ -78,6 +81,9 @@ function loader(options, paths, config) {
               fileName = fileName == '' ? `data${i}` : fileName
 
                 files[fileName] = new Database(object.path+'/'+file)
+                files[fileName].inFolder = object.name[0]
+                files[fileName].fileName = fileName
+                files[fileName].Path = path.resolve(object.path, file)
             });//set the path of folder files
 
               loaded.folders[object.name] = files

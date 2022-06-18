@@ -180,3 +180,23 @@ module.exports = [
 const Models = require('./Models.js')
 myManager.createTables(...Models)// => sucess!
 ```
+
+## `close(Options)`
+Cierra la base de datos. Contiene opciones extra de personalización y manejo.
+
+|Propiedades | Descripción
+| -- | --
+| Options | Contiene las opciones de la función
+
+| Propiedades | Descripción
+| -- | --
+| time | Un tiempo en el que estará cerrada. Tras pasar el tiempo, volverá a abrir
+| db | Cierra una base de datos en específico
+
+```js
+myManager.close()// => Succes!
+
+myManager.close({
+  time: 10000,
+  db: 'relacional/Communities'
+})
