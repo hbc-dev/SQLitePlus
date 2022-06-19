@@ -4,8 +4,8 @@ const moduleErr = require('../utils/moduleErr');
 class Extension extends Database {
     #path
 
-    constructor() {
-        super()
+    constructor(file) {
+        super(file)
 
         this.inFolder = null;
         this.fileName = null;

@@ -7,7 +7,7 @@ function reloadDatabase(db) {
         inFolder = db.inFolder,
         name = db.fileName
 
-    db = new Database()
+    db = new Database(path)
     db.inFolder = inFolder
     db.Path = path
     db.fileName = name

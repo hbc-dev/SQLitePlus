@@ -80,7 +80,7 @@ function loader(options, paths, config) {
               let fileName = file.replace('.sqlite', '')
               fileName = fileName == '' ? `data${i}` : fileName
 
-                files[fileName] = new Database(object.path+'/'+file)
+                files[fileName] = new Database(path.resolve(object.path, file))
                 files[fileName].inFolder = object.name[0]
                 files[fileName].fileName = fileName
                 files[fileName].Path = path.resolve(object.path, file)
