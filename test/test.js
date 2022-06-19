@@ -6,8 +6,8 @@ const db = new DatabaseManager({folder: true, configPath: './config.js'}, '.')
 db.src = 'test/db'//set the actual db
 
 let myDB = db.db
-db.close({time: 5000})
-setTimeout(() => {console.log(db, myDB)}, 7000)
+db.close({time: 2000}).then(() => console.log('abierta'))
+db.open({time: 4000}).then(() => console.log('cerrada'))
 return //console.log(db.folders)
 db.createTables(...Models)
 

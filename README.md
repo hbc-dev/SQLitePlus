@@ -194,9 +194,31 @@ Cierra la base de datos. Contiene opciones extra de personalización y manejo.
 | db | Cierra una base de datos en específico
 
 ```js
-myManager.close()// => Succes!
+myManager.close().then(x => console.log(x))// => Properly closed!
 
 myManager.close({
   time: 10000,
   db: 'relacional/Communities'
-})
+}).then(x => console.log(x))// => Properly open!
+```
+
+## `Open(Options)`
+Abre la base de datos. Contiene opciones extra de personalización y manejo.
+
+|Propiedades | Descripción
+| -- | --
+| Options | Contiene las opciones de la función
+
+| Propiedades | Descripción
+| -- | --
+| time | Un tiempo en el que estará abierta. Tras pasar el tiempo, volverá a cerrar
+| db | Abre una base de datos en específico
+
+```js
+myManager.open().then(x => console.log(x))// => Properly open!'
+
+myManager.open({
+  time: 30000,
+  db: 'relacional/Extra'
+}).then().then(x => console.log(x))// => Properly closed!
+

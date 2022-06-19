@@ -5,7 +5,8 @@ const searcher = require('./functions/searcher')
 const moduleErr = require('../utils/moduleErr.js')
 const Stament = require('./Stament.js')
 const searchConfig = require('./functions/config.js')
-const reloadDatabase = require('./functions/reloadDatabase.js')
+const reloadDatabase = require('./functions/reloadDatabase.js');
+const { resolve } = require('path');
 
 class DatabaseManager {
   //private
@@ -68,36 +69,52 @@ class DatabaseManager {
     this.db = searched
   }
 
-  close({time = null, db = null} = {}) {
+  async close({time = null, db = null} = {}) {
+    return new Promise((res) => {
     db = db ? searcher(db, this.folders, this.files) : this.db;
     if (!db) throw new moduleErr('No hay ninguna base de datos elegida para cerrar')
+    if (!db.open) throw new moduleErr('La base de datos ya estaba cerrada')
 
     db.close()
 
     time = Number(time)
     if (time) {
-      setTimeout(() => {
-        db = reloadDatabase(db)
-        if (db.inFolder) this.folders[db.inFolder][db.fileName] = db
-        else this.files[db.fileName] = db
+        setTimeout(() => {
+          db = reloadDatabase(db)
 
-        this.db = db
-      }, time)
-    }
+          if (db.inFolder) this.folders[db.inFolder][db.fileName] = db
+          else this.files[db.fileName] = db
+
+          this.db = db
+          return res('[SQLP]: Properly open!')
+        }, time)
+      } else res('[SQLP]: Properly closed!')
+    })
   }
 
-  open({time = null, db = null} = {}) {
-    db = db ? searcher(db, this.folders, this.files) : this.db
-    if (!db) throw new moduleErr('No hay ninguna base de datos elegida para cerrar')
+  async open({time = null, db = null} = {}) {
+    return new Promise((res) => {
+      db = db ? searcher(db, this.folders, this.files) : this.db
+      if (!db) throw new moduleErr('No hay ninguna base de datos elegida para cerrar')
 
-    db.open(true)
+      if (db.open) throw new moduleErr('La base de datos ya estaba abierta')
 
-    time = Number(time)
-    if (time) {
-      setTimeout(() => {
-        db.close()
-      }, time)
-    }
+      db = reloadDatabase(db)
+
+      if (db.inFolder) this.folders[db.inFolder][db.fileName] = db
+      else this.files[db.fileName] = db
+
+      this.db = db
+
+      time = Number(time)
+      if (time) {
+        setTimeout(() => {
+          db.close()
+
+          res('[SQLP]: Properly closed!')
+        }, time)
+      } else res('[SQLP]: Properly open!')
+    })
   }
 
   get(object) {
