@@ -6,11 +6,25 @@ const Database = require('../PropertiesExtension.js')
 function loader(options, paths, config) {
   const pathway = {}
   const loaded = {}
+  let iterationId = 0;
+  const configKeys = Object.keys(config) ?? []
+
+  if (configKeys.length > 0) {
+    for (let opts of Object.values(config)) {
+      let filter = [opts].filter(select => select.path || select.forceLoad || select.createIfNotExists || select.location?.folders)
+      if (filter.length > 0) pathway[configKeys[iterationId]] = filter[0]
+
+      iterationId++
+    }
+  }
 
   paths.forEach((item, i) => {
-    let name = item.replace('.sqlite', '').match(/\w+$/g)
-    name = name ?? [`data${i}`]
+    if (typeof item == 'object') return;
 
+    let name = item.replace('.sqlite', '').match(/\w+$/g);
+    name = name ?? [`data${i}`];
+
+    if (pathway[name[0]]) return;
     pathway[name[0]] = path.resolve(item)
     //get all the resolve paths
   });
@@ -23,8 +37,8 @@ function loader(options, paths, config) {
 
   if (options?.file) {
     loaded['files'] = {}
-
-    if (pathway.length < 1) throw new moduleErr('Añade archivos de SQLite')
+    
+    if (keys.length < 1) throw new moduleErr('Añade archivos de SQLite')
 
     let array = []
 
@@ -32,8 +46,13 @@ function loader(options, paths, config) {
             try {
               fs.readFileSync(pathway[x])
             } catch(err) {
-              if (config[x]?.createIfNotExists) fs.writeFileSync(pathway[x], '')
-              else throw new moduleErr(`Ha habido un error al acceder a los archivos. Error completo:\n${err.message}`)
+              if (pathway[x].createIfNotExists || pathway[x].forceLoad) {
+                if (typeof pathway[x] !== 'string') pathway[x] =
+                  (pathway[x].path ?? process.cwd()) +
+                  `${"\\"[0] + (x.match(/data[0-9]+/gm) ? "" : x)}.sqlite`;
+                
+                fs.writeFileSync(pathway[x], '')
+              } else throw new moduleErr(`Ha habido un error al acceder a los archivos. Error completo:\n${err.message}`)
             }
 
             if (pathway[x].match(/.\w+$/g)[0] !== '.sqlite') throw new moduleErr(`Ha sido cargado un archivo que no es sqlite: ${pathway[x]}`)
@@ -54,15 +73,18 @@ function loader(options, paths, config) {
   else if (options?.folder) {
     loaded['folders'] = {}
 
-    if (pathway.length < 1) throw new moduleErr('Añade carpetas')
+    if (keys.length < 1) throw new moduleErr('Añade carpetas')
 
       let dir;
       let array = []
 
     for (let x of keys) {
       try {
+        let configFolder = pathway[x].location.folder.path ?? null;
+
+        //pathway[x] = configFolder ? configFolder : pathway[x].forceLoad ? :;
         dir = fs.readdirSync(pathway[x])
-      } catch(err) {
+      } catch(err) { 
         throw new moduleErr(`Ha habido un error al acceder a los archivos. Error completo:\n${err.message}`)
       }
 

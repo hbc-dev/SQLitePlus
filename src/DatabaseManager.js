@@ -14,15 +14,17 @@ class DatabaseManager {
 
   constructor(opts = {folder: false, file: false, memory: true}, ...path) {
     this.#configData = !opts.configPath ? false : searchConfig(opts.configPath)
-    const loaded = loader(opts, path, this.#configData)//Load db files. Default collecting files
+
+    let config = this.#configData;
+    const loaded = loader(opts, path, config)//Load db files. Default collecting files
 
     this.data = loaded.memory ?? null;
     this.folders = loaded.folders ?? null;
     this.files = loaded.files ?? null;
-
-    if (opts.folder && opts.file) opts = {file: true, memory: opts.memory}//settings...
-
+ 
     this.db;
+
+    if (config.defaultPoint) this.src = config.defaultPoint;
   }
 
   addFiles(...files) {
@@ -38,6 +40,23 @@ class DatabaseManager {
 
     if (!this.folders) this.folders = {}
     this.folders = Object.assign(this.folders, newFolders)
+  }
+
+  createFolder({pathway = null, name = null, force = false} = {}) {
+    if (!name && !force) throw new Error("No se ha especificado el nombre de la carpeta")
+
+    if (!this.folders) this.folders = {}
+
+    let loadedFolders = this.folders
+    if (loadedFolders[name] && !force) throw new moduleErr(`Ya hay cargado una carpeta llamada ${name}. Usa la propiedad "force" para forzar la creación`)
+    else loadedFolders[name] = {}
+
+    pathway = pathway ? pathway : force ? process.cwd() : null;
+    name = name ? name : force ? 'databases' :  null;
+
+    try {
+      fs.mkdirSync(path.resolve(pathway, name));
+    } catch { if (force) return; }
   }
 
   createDB(pathway, name) {
@@ -63,7 +82,8 @@ class DatabaseManager {
   set src(name) {
     //si this.db es igual a :memory: que directamente pongamos el this.data
     if (!name) throw new moduleErr('Añade el nombre de la base de datos a usar')
-    if (name.toLowerCase() == ':memory:') return this.db = this.data
+    if (typeof name !== "string") throw new moduleErr('La ruta debe de ser un string')
+    if (name.toLowerCase() == ":memory:") return (this.db = this.data);
 
     const searched = searcher(name, this.folders, this.files)
     this.db = searched
@@ -178,8 +198,7 @@ class DatabaseManager {
   }
 
   createTables(...object) {
-    let db = this.db,
-        config = this.#configData
+    let db = this.db
 
     if (!db) throw new moduleErr('Añade una base de datos sobre la que actuar')
     if (object.length < 1) throw new moduleErr('Añade tablas para añadir a la base de datos')
@@ -188,10 +207,9 @@ class DatabaseManager {
       if (!Array.isArray(item)) throw new moduleErr('Las tablas se representan en Arrays')
       if (item.length < 2) throw new moduleErr('Datos de la tabla incompletos')
 
-      //{createIfNotExists, types}
       //tengo que crear los types, me he quedado por aquí, ve haciendo el readme vago de mierda
       const myStament = new Stament(item).create('NEW_TABLE')
-      let data = db.prepare(myStament).run()
+      db.prepare(myStament).run()
     }
   }
 

@@ -10,7 +10,7 @@ function searcher(name, folders, files) {
 
     folder = folders[folder]
 
-    if (!folder[db]) throw new moduleErr(`La base de datos ${folder[db]} no existe o no está cargada`)
+    if (!folder[db]) throw new moduleErr(`La base de datos ${db} no existe o no está cargada`)
 
     return folder[db]
   } else {

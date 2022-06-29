@@ -3,6 +3,7 @@ const moduleErr = require('../utils/moduleErr');
 
 class Extension extends Database {
     #path
+    #model
 
     constructor(file) {
         super(file)
@@ -16,7 +17,13 @@ class Extension extends Database {
         this.#path = path;
     }
 
+    set Model(model) {
+        this.#model = model;
+    }
+
     getPath() { return this.#path }
+
+    getModel() { return this.#model }
 }
 
 module.exports = Extension;

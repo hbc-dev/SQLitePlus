@@ -78,7 +78,6 @@ class Stament {
 
           try {
               group[key] = JSON.parse(object[key])
-              //console.log(object[key])
           } catch (e) {
               group[key] = object[key]
           }
@@ -94,7 +93,6 @@ class Stament {
   }
 
   simplifyData(data, principalData, {clearIDs=true, groups=true} = {}) {
-    //hay que hacer agrupaciones para que los id sean iguales
   let rawData = [],
   position;
 
@@ -134,7 +132,7 @@ class Stament {
   return {simplify: principalData, nextID: this.idGenerator}
 }
 
-  rawDataConvert(raw, groups) {
+  rawDataConvert(raw) {
   let unResolved = [],
       resolvedRaw = []
 
@@ -142,8 +140,7 @@ class Stament {
     let keys = Object.keys(item[1])
 
     for (let key of keys) {
-      let array = [],
-          value = item[1][key]
+      let value = item[1][key]
 
       if (typeof value == 'object' && !Array.isArray(value)) unResolved.push([key, value, item[2]+1, item[3], item[4]]) && resolvedRaw.push([key, '::Object::', {position: item[2]+1, in: item[0], column: item[3], id: item[4]}])
       else resolvedRaw.push([key, item[1][key], {position: item[2]+1, in: item[0], column: item[3], id: item[4]}])
