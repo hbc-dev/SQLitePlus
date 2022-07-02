@@ -2,7 +2,7 @@ const DatabaseManager = require('../src/DatabaseManager'),
       Models = require('./models.js'),
       { resolve } = require('path')
 
-const db = new DatabaseManager({file: true, configPath: './config.js'}, 'myDB.sqlite')
+const db = new DatabaseManager({file: true, configPath: './config.js'})
 
 let myDB = db.db
 /* console.log(db.get([
