@@ -2,16 +2,18 @@ const path = require('path')
 const fs = require('fs')
 const moduleErr = require('../../utils/moduleErr.js')
 const Database = require('../PropertiesExtension.js')
+const getFolder = require('./getFolder.js')
+const crypto = require('crypto')
 
 function loader(options, paths, config) {
   const pathway = {}
   const loaded = {}
   let iterationId = 0;
-  const configKeys = Object.keys(config) ?? []
+  const configKeys = config ? Object.keys(config) : []
 
   if (configKeys.length > 0) {
     for (let opts of Object.values(config)) {
-      let filter = [opts].filter(select => select.path || select.forceLoad || select.createIfNotExists || select.location?.folders)
+      let filter = [opts].filter(select => select?.forceLoad || select?.createIfNotExists)
       if (filter.length > 0) pathway[configKeys[iterationId]] = filter[0]
 
       iterationId++
@@ -46,12 +48,18 @@ function loader(options, paths, config) {
             try {
               fs.readFileSync(pathway[x])
             } catch(err) {
-              if (pathway[x].createIfNotExists || pathway[x].forceLoad) {
-                if (typeof pathway[x] !== 'string') pathway[x] =
-                  (pathway[x].path ?? process.cwd()) +
+              let props = pathway[x];
+
+              if (props.createIfNotExists || props.forceLoad) {
+                pathway[x] =
+                  ((props.path || config.defaultFileStorage) && (props.createIfNotExists || props.forceLoad)
+                    ? getFolder(props.path ?? config.defaultFileStorage)
+                    : props.forceLoad
+                    ? process.cwd()
+                    : undefined) +
                   `${"\\"[0] + (x.match(/data[0-9]+/gm) ? "" : x)}.sqlite`;
                 
-                fs.writeFileSync(pathway[x], '')
+                if (!fs.existsSync(pathway[x])) fs.writeFileSync(pathway[x], '')
               } else throw new moduleErr(`Ha habido un error al acceder a los archivos. Error completo:\n${err.message}`)
             }
 
@@ -65,6 +73,7 @@ function loader(options, paths, config) {
               loaded.files[file.name].inFolder = false
               loaded.files[file.name].fileName = file.name
               loaded.files[file.name].Path = file.path
+              loaded.files[file.name].Id = crypto.randomBytes(16).toString('hex')
           });
 
           return loaded
@@ -77,22 +86,40 @@ function loader(options, paths, config) {
 
       let dir;
       let array = []
+      let previousPaths = []// to compare previous with other path XD
 
     for (let x of keys) {
       try {
-        let configFolder = pathway[x].location.folder.path ?? null;
+        let props = pathway[x];
 
-        //pathway[x] = configFolder ? configFolder : pathway[x].forceLoad ? :;
-        dir = fs.readdirSync(pathway[x])
-      } catch(err) { 
+        if (props.forceLoad || props.createIfNotExists)
+        props =
+          (props.path || config.defaultFileStorage) &&
+          (props.createIfNotExists || props.forceLoad)
+            ? getFolder(props.path ?? config.defaultFileStorage)
+            : props.forceLoad
+            ? process.cwd()
+            : null;
+
+        if (props && previousPaths.includes(props)) continue;
+
+        dir = fs.readdirSync(props);
+        pathway[x] = props
+        previousPaths.push(props);
+      } catch(err) {
         throw new moduleErr(`Ha habido un error al acceder a los archivos. Error completo:\n${err.message}`)
       }
 
       let folderPath = pathway[x]
-      let folderName = pathway[x].match(/\w+$/g)
+      let folderName = folderPath.match(/\w+$/g)
+      let files = dir.filter(x => x.match(/.\w+$/g) == '.sqlite')
 
-      if (dir.filter(x => x.match(/.\w+$/g) == '.sqlite').length < 1) throw new moduleErr(`No se ha encontrado ninguna base de datos en la carpeta`)
-      array.push({files: dir.filter(y => y.match(/.\w+$/g) == '.sqlite'), path: folderPath, name: folderName})
+      if (files.length < 1) throw new moduleErr(`No se ha encontrado ninguna base de datos en la carpeta`)
+      array.push({
+        files: files,
+        path: folderPath,
+        name: folderName
+      })
     }
 
           array.forEach((object) => {
@@ -106,6 +133,7 @@ function loader(options, paths, config) {
                 files[fileName].inFolder = object.name[0]
                 files[fileName].fileName = fileName
                 files[fileName].Path = path.resolve(object.path, file)
+                files[fileName].Id = crypto.randomBytes(16).toString("hex");
             });//set the path of folder files
 
               loaded.folders[object.name] = files

@@ -1,15 +1,12 @@
+const {resolve} = require('path')
+
 module.exports = {
-  defaultPoint: "data0",
+  defaultPoint: null,
+  defaultFileStorage: null,
 
   db: {
     path: __dirname,
     createIfNotExists: true,
-    location: {
-      folders: {
-        name: "relacional",
-        force: true,
-      },
-    },
     models: [
       [
         "Usuarios",
@@ -56,6 +53,7 @@ module.exports = {
   },
   myDB: {
     createIfNotExists: true,
+    forceLoad: true
   },
 };
 
@@ -67,13 +65,6 @@ module.exports = {
     defaultFileStorage: String, // para establecer una ruta por defecto de dónde crear o buscar bases de datos
 
     dbName: {
-      location: {// la localización de la db en el manejador
-        folders: {// si se localiza en un directorio
-          name: String,// el nombre del directorio
-          force: Boolean, // si quieres forzar a crear la carpeta ignorando los errores
-        },
-        files: Boolean, // si la base de datos está en los archivos sueltos
-      },
       createIfNotExists: Boolean, // si quieres crear la db si no existe
       path: String, // la ruta del archivo
       strongType: Boolean, // si quieres que tenga type fuerte

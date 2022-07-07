@@ -94,6 +94,76 @@ db.createDB(__dirname, 'mysecondDB')// => Succes!
 */
 ```
 
+### `createFolder(Options)`
+Crea carpetas dentro del manejador e inclusive en tu proyecto. Fácil de usar.
+
+|Propiedades | Descripción
+| -- | --
+| Options | Contiene las opciones de la función
+
+| Propiedades | Descripción
+| -- | --
+| pathway | La ruta dónde quieres crear la carpeta dentro de tu proyecto
+| name | El nombre de la carpeta tanto en tu proyecto como en el manejador
+| force | Fuerza a crear la carpeta de cualquier manera. Ignora errores
+
+```js
+db.createFolder({pathway: __dirname, force: true})// => sucess!
+db.createFolder({name: 'temporalFolder', force: true})// => sucess! only for manager
+
+//Nota: Si no añades un nombre y tienes activo el force, se pondrá el nombre "databases" por defecto
+```
+
+### `removeFiles(Options)`
+Elimina archivos del manejador de forma sencilla e individual. Tiene alcance también en carpetas.
+
+|Propiedades | Descripción
+| -- | --
+| Options | Contiene las opciones de la función
+
+| Propiedades | Descripción
+| -- | --
+| files | Las bases de datos a eliminar del manejador
+| force | Fuerza a eliminar las bases de datos ignorando errores
+
+```js
+let removedFiles = db.removeFiles({files: ["mysecondDB", "fakeFile"], force: true})
+
+/*
+  {
+    removedFiles: 1,
+    totalFiles: 2,
+    beforeRemoved: 1,
+    filesInManager: 0
+  }
+*/
+```
+
+### `removeFolders(Options)`
+Elimina carpetas del manejador de forma sencilla e individual.
+
+|Propiedades | Descripción
+| -- | --
+| Options | Contiene las opciones de la función
+
+| Propiedades | Descripción
+| -- | --
+| folders | Las carpetas a eliminar del manejador
+| force | Fuerza a eliminar las carpetas del manejador. Ignora errores
+
+```js
+let removedFiles = db.removeFiles({folders: ["db", "dbs"], force: true})
+
+/*
+  {
+    removedFolders: 1,
+    totalFolders: 2,
+    beforeRemoved: 1,
+    foldersInManager: 0
+  }
+*/
+```
+
 # Funciones
 SQLite Plus incluye funciones y "setters" básicos. Es posible usar de forma nativa `better-sqlite3` desde el módulo cosa que se desaconseja completamente.
 
@@ -221,4 +291,5 @@ myManager.open({
   time: 30000,
   db: 'relacional/Extra'
 }).then().then(x => console.log(x))// => Properly closed!
+```
 

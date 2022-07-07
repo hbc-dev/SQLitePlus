@@ -1,14 +1,16 @@
 const DatabaseManager = require('../src/DatabaseManager'),
       Models = require('./models.js'),
-      { resolve } = require('path')
+      { resolve, join, sep } = require('path'),
+      getFolder = require('../src/functions/getFolder')
 
-const db = new DatabaseManager({file: true, configPath: './config.js'})
+const db = new DatabaseManager({folder: true, configPath: './config.js'})
 
 let myDB = db.db
 /* console.log(db.get([
   'Guilds',
   {myGuild: 'XD', data: 1}
 ])) */
+console.log(db)
 return;
 
 //myDB.prepare(`INSERT INTO Guilds(data) VALUES(?)`).run([JSON.stringify({name:'Lol'})])

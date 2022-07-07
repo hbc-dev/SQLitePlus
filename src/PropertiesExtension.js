@@ -4,13 +4,13 @@ const moduleErr = require('../utils/moduleErr');
 class Extension extends Database {
     #path
     #model
+    #id
 
     constructor(file) {
         super(file)
 
         this.inFolder = null;
         this.fileName = null;
-        this.#path = null;
     }
 
     set Path(path) {
@@ -21,9 +21,15 @@ class Extension extends Database {
         this.#model = model;
     }
 
+    set Id(id) {
+        this.#id = id;
+    }
+
     getPath() { return this.#path }
 
     getModel() { return this.#model }
+
+    getId() { return this.#id }
 }
 
 module.exports = Extension;
