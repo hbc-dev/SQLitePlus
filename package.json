@@ -2,7 +2,7 @@
   "name": "sqliteplus",
   "version": "3.0.0",
   "description": "A simple SQLite3 synchronous module",
-  "main": "src/Database.js",
+  "main": "src/DatabaseManager.js",
   "scripts": {
     "test": "node test/test.js"
   },
@@ -29,5 +29,5 @@
     "better-sqlite3-with-prebuilds": "7.4.3",
     "lodash": "4.17.21"
   },
-  "types": "./types/DatabaseManager.d.ts"
+  "types": "types/DatabaseManager.d.ts"
 }
