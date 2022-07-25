@@ -28,5 +28,6 @@
   "dependencies": {
     "better-sqlite3-with-prebuilds": "7.4.3",
     "lodash": "4.17.21"
-  }
+  },
+  "types": "./types/DatabaseManager.d.ts"
 }

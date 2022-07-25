@@ -3,14 +3,19 @@ const DatabaseManager = require('../src/DatabaseManager'),
       { resolve, join, sep } = require('path'),
       getFolder = require('../src/functions/getFolder')
 
-const db = new DatabaseManager({folder: true, configPath: './config.js'})
+const db = new DatabaseManager({file: true, configPath: './config.js'})
 
 let myDB = db.db
 /* console.log(db.get([
   'Guilds',
   {myGuild: 'XD', data: 1}
 ])) */
-console.log(db)
+db.moveFile({force: true, file: 'db', to: 'folders/test'})
+db.moveFile({file: "data0", to: "folders/test"});
+db.moveFile({file: 'myDB', to: 'folders/test'})
+
+db.moveFile({file: 'test/db', to: 'files'})
+console.log(db);
 return;
 
 //myDB.prepare(`INSERT INTO Guilds(data) VALUES(?)`).run([JSON.stringify({name:'Lol'})])

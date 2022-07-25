@@ -6,7 +6,6 @@ const moduleErr = require('../utils/moduleErr.js')
 const Stament = require('./Stament.js')
 const searchConfig = require('./functions/config.js')
 const reloadDatabase = require('./functions/reloadDatabase.js');
-const { isArray } = require('lodash');
 
 class DatabaseManager {
   //private
@@ -66,8 +65,12 @@ class DatabaseManager {
   }
 
   removeFiles({ files = null, force = false } = {}) {
-    if (!files)throw new moduleErr(`Añade los archivos a borrar del manejador. Tienen que estar dentro de un Array`);
-    if (!Array.isArray(files)) throw new moduleErr(`Los archivos deben de estar dentro de un Array`);
+    if (!files)
+      throw new moduleErr(
+        `Añade los archivos a borrar del manejador. Tienen que estar dentro de un Array`
+      );
+    if (!Array.isArray(files))
+      throw new moduleErr(`Los archivos deben de estar dentro de un Array`);
 
     let filesInManager = this.files,
       foldersInManager = this.folders,
@@ -77,21 +80,25 @@ class DatabaseManager {
       beforeRemoved = Object.keys(filesInManager).length;
 
     for (let file of files) {
-      if (typeof file !== "string" && !force) throw new moduleErr(`Se ha incluido algo que no es un archivo`);
+      if (typeof file !== "string" && !force)
+        throw new moduleErr(`Se ha incluido algo que no es un archivo`);
 
       try {
-        let searched = searcher(file, foldersInManager, filesInManager)
-        if (!filesInManager[file] && !searched.inFolder && !force) throw new moduleErr(`No se ha encontrado la base de datos ${file} dentro del manejador`);
+        let searched = searcher(file, foldersInManager, filesInManager);
+        if (!filesInManager[file] && !searched.inFolder && !force)
+          throw new moduleErr(
+            `No se ha encontrado la base de datos ${file} dentro del manejador`
+          );
 
         if (searched) removedFiles++;
         if (actualDb.getId() == searched.getId()) this.db = null;
 
-        if (searched.inFolder) delete foldersInManager[searched.inFolder][searched.fileName]
+        if (searched.inFolder)
+          delete foldersInManager[searched.inFolder][searched.fileName];
         else delete filesInManager[file];
-
-      } catch(err) {
+      } catch (err) {
         if (force) continue;
-        else throw new moduleErr(err.message)
+        else throw new moduleErr(err.message);
       }
     }
 
@@ -104,38 +111,151 @@ class DatabaseManager {
   }
 
   removeFolders({ folders = null, force = false } = {}) {
-    if (!folders) throw new moduleErr(`Debes de añadir las carpetas. Añádelas dentro de un Array`)
-    if (!Array.isArray(folders)) throw new moduleErr(`Debes de añadir las carpetas dentro de un Array`)
+    if (!folders)
+      throw new moduleErr(
+        `Debes de añadir las carpetas. Añádelas dentro de un Array`
+      );
+    if (!Array.isArray(folders))
+      throw new moduleErr(`Debes de añadir las carpetas dentro de un Array`);
 
     let foldersInManager = this.folders,
-        actualDb = this.db,
-        removedFolders = 0,
-        totalFolders = folders.length,
-        beforeRemoved = Object.keys(foldersInManager).length;
+      actualDb = this.db,
+      removedFolders = 0,
+      totalFolders = folders.length,
+      beforeRemoved = Object.keys(foldersInManager).length;
 
     for (let folder of folders) {
-      if (typeof folder !== 'string' && !force) throw new moduleErr(`Se ha includo algo que no es una carpeta`)
-      if (!foldersInManager[folder] && !force) throw new moduleErr(`No se ha encontrado la carpeta ${folder} dentro del manejador`);
+      if (typeof folder !== "string" && !force)
+        throw new moduleErr(`Se ha includo algo que no es una carpeta`);
+      if (!foldersInManager[folder] && !force)
+        throw new moduleErr(
+          `No se ha encontrado la carpeta ${folder} dentro del manejador`
+        );
 
       try {
-        if (foldersInManager[folder]) removedFolders++
-        if (actualDb?.inFolder && actualDb.getId() == foldersInManager[actualDb.inFolder][actualDb.fileName].getId())
-        this.db = null
+        if (foldersInManager[folder]) removedFolders++;
+        if (
+          actualDb?.inFolder &&
+          actualDb.getId() ==
+            foldersInManager[actualDb.inFolder][actualDb.fileName].getId()
+        )
+          this.db = null;
 
-        delete foldersInManager[folder]
-      } catch(err) { if (force) continue;else throw new moduleErr(err.message) }
+        delete foldersInManager[folder];
+      } catch (err) {
+        if (force) continue;
+        else throw new moduleErr(err.message);
+      }
     }
 
-    return {} = {
+    return ({} = {
       removedFolders,
       totalFolders,
       beforeRemoved,
-      foldersInManager: Object.keys(foldersInManager).length
+      foldersInManager: Object.keys(foldersInManager).length,
+    });
+  }
+
+  moveFile({ file = null, to = null, force = false } = {}) {
+    if (!this.folders) this.folders = {};
+    if (!this.files) this.files = {};
+
+    if (!file || !to)
+      throw new moduleErr(
+        `Faltan datos. Añade el archivo en el manejador y elige una ruta dentro del mismo`
+      );
+    if (typeof file !== "string" || typeof to !== "string")
+      throw new moduleErr(`Has introducido valores que no son de tipo String`);
+
+    let folderName = to.match(/(?<=\/).+/)?.[0];
+    let searched = searcher(file, this.folders, this.files),
+      isFolder = (folderName && to.split("").includes("/")) ?? false;
+
+    if (isFolder && to.match(/[^\/]+/)[0] !== "folders" && !force)
+      throw new moduleErr(
+        `La sintaxis correcta para mover ${file} a carpetas es "folders/myFolder"`
+      );
+
+    if (!isFolder && to !== "files" && !force)
+      throw new moduleErr(
+        `La sintaxis correcta para mover ${file} a los archivos comunes es "files"`
+      );
+
+    if (!searched && !force)
+      throw new moduleErr(`No se ha encontrado el archivo a mover a ${to}`);
+
+    let exists = isFolder
+      ? this.folders[folderName]?.[searched.fileName]
+      : this.files[searched.fileName];
+    if (!force && exists)
+      throw new moduleErr(`Ya existe la base de datos en ${to}`);
+    else if (force && exists) return;
+
+    try {
+      let folders = this.folders,
+        files = this.files;
+
+      if (isFolder) {
+        let folder = folders[folderName];
+
+        if (!folder && !force)
+          throw new moduleErr(
+            `La ruta ${folderName} no se encuentra en el manejador`
+          );
+        else if (force && !folder) {
+          this.createFolder({ name: folderName, force: true });
+
+          folder = folders[folderName];
+        }
+
+        folder[searched.fileName] = searched;
+      } else {
+        files[searched.fileName] = searched;
+      }
+
+      if (searched.inFolder) {
+        delete folders[searched.inFolder][searched.fileName];
+      } else delete files[searched.fileName];
+
+      if (isFolder)
+        folders[folderName][searched.fileName].inFolder = folderName;
+      else files[searched.fileName].inFolder = false;
+    } catch (error) {
+      if (force) return;
+      else throw new moduleErr(error.message);
     }
   }
-  //moveFiles({toFiles = true, toFolder = false, pathway = null} = {})
 
-  createDB(pathway, name) {
+  moveContent({ files = null, to = null, force = null } = {}) {
+    if (!this.folders) this.folders = {};
+    if (!this.files) this.files = {};
+
+    if (!files || !to)
+      throw new moduleErr(
+        `Faltan datos. Añade el archivo en el manejador y elige una ruta dentro del mismo`
+      );
+    if (typeof files !== "string" || typeof to !== "string")
+      throw new moduleErr(`Has introducido valores que no son de tipo String`);
+
+    let folderName = to.match(/(?<=\/).+/)?.[0];
+    let searched = searcher(files, this.folders, this.files),
+      isFolder = (folderName && to.split("").includes("/")) ?? false;
+
+    if (isFolder && to.match(/[^\/]+/)[0] !== "folders" && !force)
+      throw new moduleErr(
+        `La sintaxis correcta para mover el contenido de ${files} a carpetas es "folders/myFolder"`
+      );
+
+    if (!isFolder && to !== "files" && !force)
+      throw new moduleErr(
+        `La sintaxis correcta para mover el contenido de ${files} a los archivos comunes es "files"`
+      );
+
+    if (!searched && !force)
+      throw new moduleErr(`No se ha encontrado el directorio a mover a ${to}`);
+  }
+
+  createDB({ pathway, name } = {}) {
     if (!pathway)
       throw new moduleErr("Añade la ruta donde crear una nueva base de datos");
     if (!name) name = "";
@@ -149,12 +269,16 @@ class DatabaseManager {
       );
     }
 
-    fs.writeFile(pathway + "\\"[0] + (!name.endsWith('.sqlite') ? name+".sqlite" : name), "", function (err) {
-      if (err)
-        throw new moduleErr(
-          `A ocurrido un error, más información:\n${err.message}`
-        );
-    });
+    fs.writeFile(
+      pathway + "\\"[0] + (!name.endsWith(".sqlite") ? name + ".sqlite" : name),
+      "",
+      function (err) {
+        if (err)
+          throw new moduleErr(
+            `A ocurrido un error, más información:\n${err.message}`
+          );
+      }
+    );
 
     return {
       sucess: true,
@@ -169,7 +293,12 @@ class DatabaseManager {
       throw new moduleErr("Añade el nombre de la base de datos a usar");
     if (typeof name !== "string")
       throw new moduleErr("La ruta debe de ser un string");
-    if (name.toLowerCase() == ":memory:") return (this.db = this.data);
+    if (name.toLowerCase() == ":memory:") {
+      if (!this.data)
+        throw new moduleErr("No hay ninguna base de datos en memoria");
+      this.db = this.data;
+      return;
+    }
 
     const searched = searcher(name, this.folders, this.files);
     this.db = searched;

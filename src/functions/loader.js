@@ -32,6 +32,11 @@ function loader(options, paths, config) {
   });
 
   let keys = Object.keys(pathway)
+  if (
+    !options?.memory &&
+    !options?.file &&
+    !options?.folder
+  ) throw new moduleErr(`Activa alguna de estas propiedades para actuar: memory | file | folder`)
 
   if (options?.memory) {
     loaded['memory'] = new Database(':memory:')
@@ -140,7 +145,7 @@ function loader(options, paths, config) {
           });
 
           return loaded
-    }
+  }
 
   return loaded
 }
