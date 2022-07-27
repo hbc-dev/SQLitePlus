@@ -237,22 +237,48 @@ class DatabaseManager {
     if (typeof files !== "string" || typeof to !== "string")
       throw new moduleErr(`Has introducido valores que no son de tipo String`);
 
-    let folderName = to.match(/(?<=\/).+/)?.[0];
-    let searched = searcher(files, this.folders, this.files),
-      isFolder = (folderName && to.split("").includes("/")) ?? false;
+    let folderName = {
+      to: to.match(/(?<=\/).+/)?.[0] ?? 'files',
+      files: files.match(/(?<=\/).+/)?.[0] ?? 'files'
+    };
 
-    if (isFolder && to.match(/[^\/]+/)[0] !== "folders" && !force)
+    let searched = {
+      to: to == "files" ? this.files : this.folders[folderName.to],
+      files: files == "files" ? this.files : this.folders[folderName.files],
+    };
+
+    let isFolder = {
+        to: (folderName.to !== 'files' && to.split("").includes("/")) ?? false,
+        files: (folderName.files !== 'files' && to.split("").includes("/")) ?? false
+    }
+    
+    if (isFolder.files && files.match(/[^\/]+/)[0] !== "folders" && !force)
       throw new moduleErr(
-        `La sintaxis correcta para mover el contenido de ${files} a carpetas es "folders/myFolder"`
+        `La sintaxis correcta para mover el contenido a carpetas es "folders/myFolder"`
       );
 
-    if (!isFolder && to !== "files" && !force)
-      throw new moduleErr(
-        `La sintaxis correcta para mover el contenido de ${files} a los archivos comunes es "files"`
-      );
+    if (isFolder.to && to.match(/[^\/]+/)[0] !== 'folders' && !force) throw new moduleErr(
+      `La sintaxis correcta para mover el contenido de ${files} a carpetas es "folders/myFolder"`
+    );
+    
+    if (!isFolder.to && to !== 'files' && !force) throw new moduleErr(
+      `La sintaxis correcta para mover el contenido a los archivos comunes es "files"`
+    );
 
-    if (!searched && !force)
+    if (!isFolder.files && files !== "files" && !force) throw new moduleErr(
+      `La sintaxis correcta para mover el contenido de a los archivos comunes es "files"`
+    );
+
+    return console.log(searched)
+    if (!searched.to && !force)
       throw new moduleErr(`No se ha encontrado el directorio a mover a ${to}`);
+
+    if (!searched.files && !force)
+      throw new moduleErr(`No se ha encontrado el directorio a mover a ${to}`);
+
+    if (files == to && !force) throw new moduleErr(
+      `No puedes mover el contenido de ${folderName} a ${folderName}`
+    )
   }
 
   createDB({ pathway, name } = {}) {
@@ -288,7 +314,6 @@ class DatabaseManager {
 
   //BASE DE DATOS
   set src(name) {
-    //si this.db es igual a :memory: que directamente pongamos el this.data
     if (!name)
       throw new moduleErr("Añade el nombre de la base de datos a usar");
     if (typeof name !== "string")

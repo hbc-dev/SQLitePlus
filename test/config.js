@@ -63,6 +63,7 @@ module.exports = {
   {
     defaultPoint: String, // para establecer la db desde el inicio
     defaultFileStorage: String, // para establecer una ruta por defecto de dónde crear o buscar bases de datos
+    exclude: Array, // para excluir bases de datos del manejador
 
     dbName: {
       createIfNotExists: Boolean, // si quieres crear la db si no existe

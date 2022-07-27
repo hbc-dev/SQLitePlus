@@ -10,12 +10,10 @@ let myDB = db.db
   'Guilds',
   {myGuild: 'XD', data: 1}
 ])) */
-db.moveFile({force: true, file: 'db', to: 'folders/test'})
-db.moveFile({file: "data0", to: "folders/test"});
-db.moveFile({file: 'myDB', to: 'folders/test'})
 
-db.moveFile({file: 'test/db', to: 'files'})
-console.log(db);
+db.createFolder({name: 'test'})
+db.moveContent({files: 'folders/tos', to: 'folders/test'})
+//console.log(db);
 return;
 
 //myDB.prepare(`INSERT INTO Guilds(data) VALUES(?)`).run([JSON.stringify({name:'Lol'})])
