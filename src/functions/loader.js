@@ -62,7 +62,7 @@ function loader(options, paths, config) {
                     : props.forceLoad
                     ? process.cwd()
                     : undefined) +
-                  `${"\\"[0] + (x.match(/data[0-9]+/gm) ? "" : x)}.sqlite`;
+                  `${path.sep + (x.match(/data[0-9]+/gm) ? "" : x)}.sqlite`;
                 
                 if (!fs.existsSync(pathway[x])) fs.writeFileSync(pathway[x], '')
               } else throw new moduleErr(`Ha habido un error al acceder a los archivos. Error completo:\n${err.message}`)

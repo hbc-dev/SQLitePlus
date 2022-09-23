@@ -1,7 +1,7 @@
 const {resolve} = require('path')
 
 module.exports = {
-  defaultPoint: 'db',
+  //defaultPoint: 'db',
   defaultFileStorage: null,
 
   db: {

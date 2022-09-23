@@ -3,19 +3,17 @@ const DatabaseManager = require('../src/DatabaseManager'),
       { resolve, join, sep } = require('path'),
       getFolder = require('../src/functions/getFolder')
 
-const db = new DatabaseManager({file: true, configPath: './config.js'})
-
+const db = new DatabaseManager({folder: true, configPath: './config.js'})
 let myDB = db.db
 /* console.log(db.get([
   'Guilds',
   {myGuild: 'XD', data: 1}
 ])) */
 
-db.createFolder({name: 'test'})
-db.moveContent({files: 'folders/tos', to: 'folders/test'})
-//console.log(db);
-return;
-
+//db.createFolder({name: 'test', force: true})
+db.moveContent({files: 'folders/test', to: 'folders/tos', force: true})
+db.moveFile({file: 'tos/data0', to: 'folders/tar', force: true})
+console.log(db)
 //myDB.prepare(`INSERT INTO Guilds(data) VALUES(?)`).run([JSON.stringify({name:'Lol'})])
 
 //console.log(JSON.parse(myDB.replace(/^'|'$/gm, ''))) | A saber para que es esto xd
@@ -31,6 +29,7 @@ return;
 //     }
 //   ])
 
+return;
 let myGet = db.get([
   'Guilds',
   {

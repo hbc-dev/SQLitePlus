@@ -249,7 +249,7 @@ class DatabaseManager {
 
     let isFolder = {
         to: (folderName.to !== 'files' && to.split("").includes("/")) ?? false,
-        files: (folderName.files !== 'files' && to.split("").includes("/")) ?? false
+        files: (folderName.files !== 'files' && files.split("").includes("/")) ?? false
     }
     
     if (isFolder.files && files.match(/[^\/]+/)[0] !== "folders" && !force)
@@ -269,16 +269,29 @@ class DatabaseManager {
       `La sintaxis correcta para mover el contenido de a los archivos comunes es "files"`
     );
 
-    return console.log(searched)
     if (!searched.to && !force)
-      throw new moduleErr(`No se ha encontrado el directorio a mover a ${to}`);
+      throw new moduleErr(`El directorio ${to} no existe`);
+    else if (force && !searched.to && isFolder.to) this.createFolder({name: folderName.to, force});
 
     if (!searched.files && !force)
-      throw new moduleErr(`No se ha encontrado el directorio a mover a ${to}`);
+      throw new moduleErr(`El directorio ${files} no existe`);
+    else if (force && !searched.files && isFolder.files) this.createFolder({name: folderName.files, force});
 
     if (files == to && !force) throw new moduleErr(
-      `No puedes mover el contenido de ${folderName} a ${folderName}`
-    )
+      `No puedes mover el contenido a la misma carpeta de destino`
+    ); else if (files == to && force) return;
+
+    for (let db of Object.values(this.folders[folderName.files] ?? this.files)) {
+      db.inFolder = isFolder.to ? folderName.to : false;
+    }
+
+    Object.assign(
+      this.folders[folderName.to] ?? this.files,
+      this.folders[folderName.files] ?? this.files
+    );
+
+    if (isFolder.files) this.folders[folderName.files] = {}
+    else this.files = {};
   }
 
   createDB({ pathway, name } = {}) {
@@ -296,7 +309,7 @@ class DatabaseManager {
     }
 
     fs.writeFile(
-      pathway + "\\"[0] + (!name.endsWith(".sqlite") ? name + ".sqlite" : name),
+      pathway + path.sep + (!name.endsWith(".sqlite") ? name + ".sqlite" : name),
       "",
       function (err) {
         if (err)
@@ -308,7 +321,7 @@ class DatabaseManager {
 
     return {
       sucess: true,
-      pathway: path.resolve(pathway + "/" + name + ".sqlite"),
+      pathway: path.resolve(pathway + path.sep + name + ".sqlite"),
     };
   }
 

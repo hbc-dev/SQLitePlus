@@ -164,6 +164,40 @@ let removedFiles = db.removeFiles({folders: ["db", "dbs"], force: true})
 */
 ```
 
+### `moveFile(Options)`
+Mueve un archivo hacia el directorio que quieras.
+
+|Propiedades | Descripción
+| -- | --
+| Options | Contiene las opciones de la función
+
+| Propiedades | Descripción
+| -- | --
+| file | El archivo que quieres mover
+| to | El directorio donde lo quieres mover
+| force | Fuerza a mover el archivo, ignora errores
+
+```js
+db.moveFile({file: 'db', to: 'folders/relacional', force: true});
+```
+
+### `moveContent(Options)`
+Mueve un archivo hacia el directorio que quieras.
+
+|Propiedades | Descripción
+| -- | --
+| Options | Contiene las opciones de la función
+
+| Propiedades | Descripción
+| -- | --
+| files | El directorio de los archivos a mover
+| to | El directorio donde los quieres mover
+| force | Fuerza a mover los archivos, ignora errores
+
+```js
+db.moveContent({file: 'folders/relacional', to: 'files', force: true});
+```
+
 # Funciones
 SQLite Plus incluye funciones y "setters" básicos. Es posible usar de forma nativa `better-sqlite3` desde el módulo cosa que se desaconseja completamente.
 
