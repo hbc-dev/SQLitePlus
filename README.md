@@ -192,6 +192,7 @@ Mueve un archivo hacia el directorio que quieras.
 | -- | --
 | files | El directorio de los archivos a mover
 | to | El directorio donde los quieres mover
+| exclude | Excluye algunas carpetas
 | force | Fuerza a mover los archivos, ignora errores
 
 ```js

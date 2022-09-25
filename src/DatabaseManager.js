@@ -226,7 +226,7 @@ class DatabaseManager {
     }
   }
 
-  moveContent({ files = null, to = null, force = null } = {}) {
+  moveContent({ files = null, to = null, force = null, exclude = [] } = {}) {
     if (!this.folders) this.folders = {};
     if (!this.files) this.files = {};
 
@@ -236,6 +236,8 @@ class DatabaseManager {
       );
     if (typeof files !== "string" || typeof to !== "string")
       throw new moduleErr(`Has introducido valores que no son de tipo String`);
+    
+    if (!Array.isArray(exclude)) throw new moduleErr(`Los archivos excluídos van en un array`);
 
     let folderName = {
       to: to.match(/(?<=\/).+/)?.[0] ?? 'files',
@@ -280,18 +282,17 @@ class DatabaseManager {
     if (files == to && !force) throw new moduleErr(
       `No puedes mover el contenido a la misma carpeta de destino`
     ); else if (files == to && force) return;
+    
+    to = this.folders[folderName.to] ?? this.files;
+    files = this.folders[folderName.files] ?? this.files
 
-    for (let db of Object.values(this.folders[folderName.files] ?? this.files)) {
-      db.inFolder = isFolder.to ? folderName.to : false;
+    for (let db of Object.values(files)) {
+      if (exclude.includes(db.fileName)) continue;
+      else db.inFolder = isFolder.to ? folderName.to : false;
+
+      to[db.fileName] = db;
+      delete files[db.fileName];
     }
-
-    Object.assign(
-      this.folders[folderName.to] ?? this.files,
-      this.folders[folderName.files] ?? this.files
-    );
-
-    if (isFolder.files) this.folders[folderName.files] = {}
-    else this.files = {};
   }
 
   createDB({ pathway, name } = {}) {

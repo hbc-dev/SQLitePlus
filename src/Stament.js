@@ -19,10 +19,10 @@ GET_DATA: Busca datos en las columnas
 
 class Stament {
   constructor(data) {
-    this.table = data[0]//el nombre de la tabla
-    this.data = data[1]//los datos
-    this.rest = data[2]//el resto, pueden ser muchas weas xd
-    this.idGenerator = 0//para generar ids
+    this.table = Array.isArray(data) ? data[0] : data;//el nombre de la tabla
+    this.data = data[1];//los datos
+    this.rest = data[2];//el resto, pueden ser muchas weas xd
+    this.idGenerator = 0;//para generar ids
   }
 
   create(type) {

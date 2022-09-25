@@ -10,10 +10,9 @@ let myDB = db.db
   {myGuild: 'XD', data: 1}
 ])) */
 
-//db.createFolder({name: 'test', force: true})
-db.moveContent({files: 'folders/test', to: 'folders/tos', force: true})
-db.moveFile({file: 'tos/data0', to: 'folders/tar', force: true})
-console.log(db)
+db.createFolder({name: 'relacional', force: true});
+db.moveContent({files: 'folders/test', to: 'folders/relacional', exclude: ['data0']});
+console.log(db.folders)
 //myDB.prepare(`INSERT INTO Guilds(data) VALUES(?)`).run([JSON.stringify({name:'Lol'})])
 
 //console.log(JSON.parse(myDB.replace(/^'|'$/gm, ''))) | A saber para que es esto xd
