@@ -1,11 +1,10 @@
 const {resolve} = require('path')
 
 module.exports = {
-  defaultPoint: 'test/db',
-  defaultFileStorage: null,
+  //defaultPoint: "test/db",
+  defaultFileStorage: __dirname,
 
   db: {
-    path: __dirname,
     createIfNotExists: true,
     models: [
       [
@@ -43,17 +42,10 @@ module.exports = {
   data0: {
     createIfNotExists: true,
     forceLoad: true,
-    models: [
-      "Prueba",
-      "helloooo",
-      {
-        createIfNotExists: true,
-      },
-    ],
   },
   myDB: {
     createIfNotExists: true,
-    forceLoad: true
+    forceLoad: true,
   },
 };
 
@@ -68,7 +60,6 @@ module.exports = {
     dbName: {
       createIfNotExists: Boolean, // si quieres crear la db si no existe
       path: String, // la ruta del archivo
-      strongType: Boolean, // si quieres que tenga type fuerte
       open: Boolean, // si quieres cerrar o no las transiciones a la base de datos
       models: Array, // el modelo que tendrá la base de datos
       forceLoad: Boolean, // si la base debe ser forzada a cargarse dentro del manejador aunque no se referencie

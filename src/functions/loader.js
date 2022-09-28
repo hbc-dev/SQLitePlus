@@ -5,7 +5,7 @@ const Database = require('../PropertiesExtension.js')
 const getFolder = require('./getFolder.js')
 const crypto = require('crypto')
 
-function loader(options, paths, config) {
+function loader(options, paths, config, manager) {
   const pathway = {}
   const loaded = {}
   let iterationId = 0;
@@ -79,6 +79,11 @@ function loader(options, paths, config) {
               loaded.files[file.name].fileName = file.name
               loaded.files[file.name].Path = file.path
               loaded.files[file.name].Id = crypto.randomBytes(16).toString('hex')
+
+              if (config[file.name]?.models) {
+                manager.db = loaded.files[file.name];
+                manager.createTables(...config[file.name].models)
+              }
           });
 
           return loaded
@@ -97,14 +102,15 @@ function loader(options, paths, config) {
       try {
         let props = pathway[x];
 
-        if (props.forceLoad || props.createIfNotExists)
-        props =
+        if (props.forceLoad || props.createIfNotExists) {
+          props =
           (props.path || config.defaultFileStorage) &&
           (props.createIfNotExists || props.forceLoad)
             ? getFolder(props.path ?? config.defaultFileStorage)
             : props.forceLoad
             ? process.cwd()
             : null;
+        }
 
         if (props && previousPaths.includes(props)) continue;
 
@@ -118,6 +124,17 @@ function loader(options, paths, config) {
       let folderPath = pathway[x]
       let folderName = folderPath.match(/\w+$/g)
       let files = dir.filter(x => x.match(/.\w+$/g) == '.sqlite')
+      let reg = new RegExp(/data\d*/gm);
+
+      for (let database of Object.keys(config)) {
+        let checkName = reg.test(database) ? ".sqlite" : database+'.sqlite';
+
+        if (!files.includes(checkName) && (config[database]?.createIfNotExists || config[database]?.forceLoad)) {
+          manager.createDB({pathway: folderPath, name: checkName});
+
+          files.push(checkName);
+        } else continue;
+      }
 
       if (files.length < 1) throw new moduleErr(`No se ha encontrado ninguna base de datos en la carpeta`)
       array.push({
@@ -138,7 +155,12 @@ function loader(options, paths, config) {
                 files[fileName].inFolder = object.name[0]
                 files[fileName].fileName = fileName
                 files[fileName].Path = path.resolve(object.path, file)
-                files[fileName].Id = crypto.randomBytes(16).toString("hex");
+                files[fileName].Id = crypto.randomBytes(16).toString("hex")
+
+                if (config[fileName]?.models) {
+                  manager.db = files[fileName];
+                  manager.createTables(...config[fileName].models);
+                }
             });//set the path of folder files
 
               loaded.folders[object.name] = files

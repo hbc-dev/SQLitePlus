@@ -15,15 +15,14 @@ class DatabaseManager {
     this.#configData = !opts.configPath ? false : searchConfig(opts.configPath);
 
     let config = this.#configData;
-    const loaded = loader(opts, path, config); //Load db files. Default collecting files
+    const loaded = loader(opts, path, config, this); //Load db files. Default collecting files
 
     this.data = loaded.memory ?? null;
     this.folders = loaded.folders ?? null;
     this.files = loaded.files ?? null;
 
-    this.db;
-
     if (config.defaultPoint) this.src = config.defaultPoint;
+    else this.db = null;
   }
 
   addFiles(...files) {
