@@ -32,19 +32,28 @@ const db = new DatabaseManager({file: true}, 'db.sqlite')
 console.log(db)// => Let see the output!
 /*
 DatabaseManager {
+    db: Database {
+      name: '/home/hugo/Escritorio/modules/SQLitePlus/test/.sqlite',
+      open: true,
+      inTransaction: false,
+      readonly: false,
+      memory: false,
+      inFolder: false,
+      fileName: 'NONAME_test'
+  },
   data: null,
   folders: null,
   files: {
     db: Database {
-      name: 'C:\\Users\\hugo\\Desktop\\npm modules\\SQLitePlus\\test\\db.sqlite',
+      name: '/home/hugo/Escritorio/modules/SQLitePlus/test/db.sqlite',
       open: true,
       inTransaction: false,
       readonly: false,
-      memory: false
-
+      memory: false,
+      inFolder: false,
+      fileName: 'db'
     }
-  },
-  typesDB: { file: true }
+  }
 }
 */
 ```
@@ -252,12 +261,12 @@ myManager.src = 'Users'//vamos a emplear la base de datos "Users"
 myManager.src = 'relacional/Communities'//... la base de datos "Communities" guardada en una carpeta
 ```
 
-## `createTables(Models)`
+## `createTables(...Models)`
 Crea tablas dentro de una base de datos de forma rápida y automática
 
 | Propiedades | Descripción
 | -- | --
-| Models | Los modelos de las bases de datos |
+| Models (rest) | Los modelos de las bases de datos |
 
 ```js
 //Models.js

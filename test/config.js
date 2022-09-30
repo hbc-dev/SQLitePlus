@@ -1,7 +1,7 @@
 const {resolve} = require('path')
 
 module.exports = {
-  //defaultPoint: "test/db",
+  defaultPoint: "NONAME_test",
   defaultFileStorage: __dirname,
 
   db: {
@@ -39,9 +39,18 @@ module.exports = {
       ],
     ],
   },
-  data0: {
+  NONAME_test: {
     createIfNotExists: true,
     forceLoad: true,
+    models: [
+      [
+        'Container',
+        {
+          pointerKey: null,
+          data: null
+        }
+      ]
+    ]
   },
   myDB: {
     createIfNotExists: true,

@@ -1,5 +1,5 @@
 const moduleErr = require('../utils/moduleErr.js'),
-      lodashArray = require('lodash')
+      lodashArray = require('lodash'),
       types = {
         object: 'TEXT',
         string: 'TEXT',

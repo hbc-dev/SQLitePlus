@@ -54,7 +54,7 @@ function loader(options, paths, config, manager) {
               fs.readFileSync(pathway[x])
             } catch(err) {
               let props = pathway[x];
-
+              
               if (props.createIfNotExists || props.forceLoad) {
                 pathway[x] =
                   ((props.path || config.defaultFileStorage) && (props.createIfNotExists || props.forceLoad)
@@ -62,7 +62,7 @@ function loader(options, paths, config, manager) {
                     : props.forceLoad
                     ? process.cwd()
                     : undefined) +
-                  `${path.sep + (x.match(/data[0-9]+/gm) ? "" : x)}.sqlite`;
+                  `${path.sep + (x.match(/(?:NONAME_.*|NONAME)/gm) ? "" : x)}.sqlite`;
                 
                 if (!fs.existsSync(pathway[x])) fs.writeFileSync(pathway[x], '')
               } else throw new moduleErr(`Ha habido un error al acceder a los archivos. Error completo:\n${err.message}`)
@@ -122,9 +122,9 @@ function loader(options, paths, config, manager) {
       }
 
       let folderPath = pathway[x]
-      let folderName = folderPath.match(/\w+$/g)
+      let folderName = folderPath.match(/\w+$/g)[0]
       let files = dir.filter(x => x.match(/.\w+$/g) == '.sqlite')
-      let reg = new RegExp(/data\d*/gm);
+      let reg = new RegExp(/(?:NONAME_.*|NONAME)/gm);
 
       for (let database of Object.keys(config)) {
         let checkName = reg.test(database) ? ".sqlite" : database+'.sqlite';
@@ -148,11 +148,11 @@ function loader(options, paths, config, manager) {
             let files = {}
 
             object.files.forEach((file, i) => {
-              let fileName = file.replace('.sqlite', '')
-              fileName = fileName == '' ? `data${i}` : fileName
+              let fileName = file.replace(/\.sqlite$/gm, '')
+              fileName = fileName == '' ? `NONAME_${object.name}` : fileName
 
                 files[fileName] = new Database(path.resolve(object.path, file))
-                files[fileName].inFolder = object.name[0]
+                files[fileName].inFolder = object.name
                 files[fileName].fileName = fileName
                 files[fileName].Path = path.resolve(object.path, file)
                 files[fileName].Id = crypto.randomBytes(16).toString("hex")
