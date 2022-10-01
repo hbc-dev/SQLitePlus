@@ -24,7 +24,7 @@ function loader(options, paths, config, manager) {
     if (typeof item == 'object') return;
 
     let name = item.replace('.sqlite', '').match(/\w+$/g);
-    name = name ?? [`data${i}`];
+    name = name ?? [`NONAME`];
 
     if (pathway[name[0]]) return;
     pathway[name[0]] = path.resolve(item)

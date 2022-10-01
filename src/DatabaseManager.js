@@ -18,8 +18,8 @@ class DatabaseManager {
     const loaded = loader(opts, path, config, this); //Load db files. Default collecting files
 
     this.data = loaded.memory ?? null;
-    this.folders = loaded.folders ?? null;
-    this.files = loaded.files ?? null;
+    this.folders = loaded.folders ?? {};
+    this.files = loaded.files ?? {};
 
     if (config.defaultPoint) this.src = config.defaultPoint;
     else this.db = null;
@@ -331,15 +331,14 @@ class DatabaseManager {
       throw new moduleErr("Añade el nombre de la base de datos a usar");
     if (typeof name !== "string")
       throw new moduleErr("La ruta debe de ser un string");
-    if (name.toLowerCase() == ":memory:") {
-      if (!this.data)
-        throw new moduleErr("No hay ninguna base de datos en memoria");
-      this.db = this.data;
-      return;
-    }
 
     const searched = searcher(name, this.folders, this.files);
-    this.db = searched;
+    if (typeof searched == 'string' && searched.toLowerCase() == ":memory:") {
+      if (!this.data) throw new moduleErr("No hay ninguna base de datos en memoria");
+
+      this.db = this.data;
+      return;
+    } else this.db = searched;
   }
 
   async close({ time = null, db = null } = {}) {
@@ -473,7 +472,6 @@ class DatabaseManager {
         throw new moduleErr("Las tablas se representan en Arrays");
       if (item.length < 2) throw new moduleErr("Datos de la tabla incompletos");
 
-      //tengo que crear los types, me he quedado por aquí, ve haciendo el readme vago de mierda
       const myStament = new Stament(item).create("NEW_TABLE");
       db.prepare(myStament).run();
     }
