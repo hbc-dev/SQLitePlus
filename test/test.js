@@ -3,7 +3,8 @@ const DatabaseManager = require('../src/DatabaseManager'),
       { resolve, join, sep } = require('path'),
       getFolder = require('../src/functions/getFolder')
 
-const db = new DatabaseManager({folder: true, configPath: './config.js'});
+const db = new DatabaseManager({file: true, configPath: './config.js'});
+console.log(db)
 /* console.log(db.get([
   'Guilds',
   {myGuild: 'XD', data: 1}

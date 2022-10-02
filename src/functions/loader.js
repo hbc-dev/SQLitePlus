@@ -54,6 +54,10 @@ function loader(options, paths, config, manager) {
               fs.readFileSync(pathway[x])
             } catch(err) {
               let props = pathway[x];
+
+              if (x.startsWith("NONAME_") && !props.forceLoad) throw new moduleErr(
+                `${x} es una palabra reservada para carpetas. Usa forceLoad para saltar el error`
+              ); else if (x.startsWith("NONAME_") && props.forceLoad) continue;
               
               if (props.createIfNotExists || props.forceLoad) {
                 pathway[x] =
@@ -83,6 +87,11 @@ function loader(options, paths, config, manager) {
               if (config[file.name]?.models) {
                 manager.db = loaded.files[file.name];
                 manager.createTables(...config[file.name].models)
+              }
+
+              if (config[file.name]?.close) {
+                manager.db = loaded.files[file.name];
+                manager.close();
               }
           });
 
@@ -160,6 +169,11 @@ function loader(options, paths, config, manager) {
                 if (config[fileName]?.models) {
                   manager.db = files[fileName];
                   manager.createTables(...config[fileName].models);
+                }
+
+                if (config[fileName]?.close) {
+                  manager.db = files[fileName];
+                  manager.close();
                 }
             });//set the path of folder files
 

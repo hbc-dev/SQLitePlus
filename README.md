@@ -230,6 +230,23 @@ myDB.prepare(`SELECT * FROM Users WHERE id=1, name=Juán`).run([1, 'Alberto'])
 
 Se recomienda usar estas funciones unicamente cuando algo no haya sido incluido dentro del módulo.
 
+> Nota: hay ciertas palabras que están reservadas las cuales no pueden ser usadas. Esta es al lista de palabras reservadas:
+
+| Palabra | Nombrar db | Explicación
+| -- | -- | --
+| defaultPoint | ❌ | Reservado para configuraciones
+| defaultFileStorage | ❌ | Reservado para configuraciones
+| defaultConfig | ❌ | Reservado para configuraciones
+| exclude | ❌ | Reservado para configuraciones
+| NONAME_ | ⚠ | Reservado únicamente para cargar archivos sin nombre desde carpetas
+| NONAME | ⚠ | Reservado únicamente para cargar archivos sin nombre sueltos
+
+| Símbolo | Significado 
+| -- | --
+| ✅ | Se puede usar |
+| ❌ | No se puede usar |
+| ⚠ | Parcial |
+
 ## `src`
 Escoge la base de datos sobre la que quieres actuar de forma sencilla e intuitiva.
 

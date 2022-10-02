@@ -1,4 +1,8 @@
 const moduleErr = require("../utils/moduleErr");
+const reservateWords = [
+    "defaultPoint",
+    "defaultFileStorage"
+]
 
 class ManagerConfig {
     constructor({
@@ -25,7 +29,7 @@ class ManagerConfig {
     addDatabase(name, {
         createIfNotExists = true,
         path = null,
-        open = true,
+        close = false,
         models = [],
         forceLoad = false
     } = {}) {
@@ -37,7 +41,7 @@ class ManagerConfig {
         if (path && typeof path !== 'string') throw new moduleErr(
             `La propiedad "path" debe ser un string`
         )
-        if (typeof open !== 'boolean') throw new moduleErr(
+        if (typeof close !== 'boolean') throw new moduleErr(
             `La propiedad "open" debe ser un boolean`
         )
         if (!Array.isArray(models)) throw new moduleErr(
@@ -61,7 +65,7 @@ class ManagerConfig {
         this[name] = {
             createIfNotExists,
             path,
-            open,
+            close,
             models,
             forceLoad
         }
@@ -92,6 +96,33 @@ class ManagerConfig {
         for (let name of names) {
             this.removeDatabase(name)
         }
+    }
+
+    cloneDatabase({name, clone, force = false} = {}) {
+        if (typeof name !== 'string') throw new moduleErr(`Se esperaba un string como "name"`)
+        if (typeof clone !== 'string') throw new moduleErr(`Se esperaba un string como "clone"`);
+
+        if (!this[clone] || typeof this[clone] !== 'object' || Array.isArray(this[clone]))
+            throw new moduleErr(`No se ha encontrado el modelo a clonar "${clone}"`)
+
+        if (reservateWords.includes(name)) throw new moduleErr(`Ese nombre es una palabra reservada`)
+        if (!force && this[name]) throw new moduleErr(`"${name}" ya tiene una db asignada`)
+
+        this[name] = this[clone]
+    }
+
+    editDatabase(name, edit) {
+        if (typeof name !== 'string') throw new moduleErr(`Se esperaba un string como "name"`)
+        if (typeof edit !== 'object' || Array.isArray(edit)) throw new moduleErr(`Se esperaba un object como "edit"`)
+
+        if (!this[name] || typeof this[name] !== 'object' || Array.isArray(this[name])) throw new moduleErr(
+            `No se ha encontrado "${name}"`
+        )
+
+        let edited = Object.assign(this[name], edit)
+        delete this[name]
+
+        this.addDatabase(name, edited);
     }
 }
 

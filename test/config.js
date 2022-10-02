@@ -42,9 +42,10 @@ config.addDatabase('db', {
   ]
 });
 
-config.addDatabase('NONAME', {
+config.addDatabase('NONAME_test', {
   createIfNotExists: true,
   forceLoad: true,
+  close: false,
   models: [
     [
       'Container',
@@ -76,8 +77,9 @@ config.addDatabase('myDB', {
       }
     ]
   ]
-})
+});
 
+config.cloneDatabase({name: 'NONAME', clone: 'NONAME_test'})
 module.exports = config;
 
 /*
