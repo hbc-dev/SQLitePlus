@@ -1,62 +1,84 @@
 const {resolve} = require('path')
+const ManagerConfig = require('../src/ManagerConfig')
 
-module.exports = {
-  defaultPoint: "test/db OR NONAME_test OR myDB OR :memory:",
+const config = new ManagerConfig({
   defaultFileStorage: __dirname,
+  defaultPoint: "test/db OR test/NONAME_test OR db OR NONAME OR :memory:",
+});
 
-  db: {
-    createIfNotExists: true,
-    models: [
-      [
-        "Usuarios",
-        {
-          myUser: {
-            name: null,
-            siuu: true,
-          },
-        },
-      ],
-      [
-        "Guilds",
-        {
-          myGuild: "XD",
-          data: {
-            name: "LOL",
-          },
-        },
-      ],
-      [
-        "Test",
-        {
-          myGuild: {
-            name: null,
-            data: {
-              year: 2022,
-              day: undefined,
-            },
-          },
-        },
-      ],
-    ],
-  },
-  NONAME: {
-    createIfNotExists: true,
-    forceLoad: true,
-    models: [
-      [
-        'Container',
-        {
-          pointerKey: null,
-          data: null
+config.addDatabase('db', {
+  createIfNotExists: true,
+  models: [
+    [
+      "Usuarios",
+      {
+        myUser: {
+          name: null,
+          siuu: null
         }
-      ]
+      }
+    ],
+    [
+      "Guilds",
+      {
+        myGuild: 'XD',
+        data: {
+          name: 'LOL'
+        }
+      }
+    ],
+    [
+      "Test",
+      {
+        myGuild: {
+          name: null,
+          data: {
+            year: 2022,
+            day: undefined
+          }
+        }
+      }
     ]
-  },
-  myDB: {
-    createIfNotExists: true,
-    forceLoad: true,
-  },
-};
+  ]
+});
+
+config.addDatabase('NONAME', {
+  createIfNotExists: true,
+  forceLoad: true,
+  models: [
+    [
+      'Container',
+      {
+        pointerKey: null,
+        data: null
+      }
+    ]
+  ]
+});
+
+config.addDatabase('myDB', {
+  createIfNotExists: true,
+  forceLoad: true,
+  models: [
+    [
+      'Users',
+      {
+        points: 0,
+        id: null,
+        username: null
+      }
+    ],
+    [
+      'Pointer',
+      {
+        key: null,
+        data: null
+      }
+    ]
+  ]
+})
+
+module.exports = config;
 
 /*
   Estructura:
