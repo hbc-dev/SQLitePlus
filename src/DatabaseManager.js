@@ -321,7 +321,7 @@ class DatabaseManager {
 
     return {
       sucess: true,
-      pathway: path.resolve(pathway + path.sep + name + ".sqlite"),
+      pathway: path.resolve(pathway + path.sep + (!name.endsWith(".sqlite") ? name + ".sqlite" : name)),
     };
   }
 
@@ -488,4 +488,4 @@ class DatabaseManager {
   }
 }
 
-module.exports = DatabaseManager
+module.exports = DatabaseManager;
