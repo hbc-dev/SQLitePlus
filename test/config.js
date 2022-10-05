@@ -15,7 +15,7 @@ config.addDatabase('db', {
           info: {name: 'user', mail: null, lastname: null},
           siuu: {xd: 'xd'}
         },
-        myGuild: 'XD'
+        myGuild: `I can push quotes '''`
       }
     ],
     [

@@ -4,33 +4,24 @@ const DatabaseManager = require('../src/DatabaseManager'),
       getFolder = require('../src/functions/getFolder')
 
 const db = new DatabaseManager({file: true, configPath: './config.js'});
-/* console.log(db.get([
-  'Guilds',
-  {myGuild: 'XD', data: 1}
-])) */
-//myDB.prepare(`INSERT INTO Guilds(data) VALUES(?)`).run([JSON.stringify({name:'Lol'})])
 
-//console.log(JSON.parse(myDB.replace(/^'|'$/gm, ''))) | A saber para que es esto xd
-
-// let insert = db.insert([
-//   'Test',
-//   {
-//     myGuild: {
-//       data: {
-//         name: 'El rincón del vago'
-//         }
-//       }
-//     }
-//   ])
-
-return;
-let myGet = db.get([
-  'Guilds',
+db.insert([
+  "Usuarios",
   {
-   data: {name: 'Lol'},
-}
-])
+    myUser: {
+      info: {name: '327'},
+      siuu: 'xdd'
+    },
+  }
+]);
 
-console.time()
-console.log(myGet)
-console.timeEnd()
+let getter = db.get([
+  "Usuarios",
+  {
+    myUser: {
+      info: {name: '327'}
+    }
+  }
+]);
+
+console.log(getter)

@@ -25,7 +25,7 @@ class Stament {
       let base = `CREATE TABLE ${!this.rest?.createIfNotExists ? 'IF NOT EXISTS' : ''} ${this.table}(`//la base de la sentencia de sql
 
       for (let column of Object.keys(this.data)) {
-        base = base+`${column} ${types[typeof this.data[column]] || 'BLOB'} DEFAULT '${JSON.stringify(this.data[column])}',`
+        base = base+`${column} ${types[typeof this.data[column]] || 'BLOB'} DEFAULT '${JSON.stringify(this.data[column]).replace(/\'/gm, `''`)}',`
       }
 
       return base.replace(/,$/gm, '')+')'
@@ -38,7 +38,7 @@ class Stament {
 
       for (let column of Object.keys(this.data)) {
         data = data+`${column},`
-        final = final+`'${JSON.stringify(this.data[column])}',`
+        final = final+`'${JSON.stringify(this.data[column]).replace(/\'/gm, `''`)}',`
       }
 
       return base+data.replace(/,$/gm, '')+') '+final.replace(/,$/gm, '')+')'
