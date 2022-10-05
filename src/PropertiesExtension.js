@@ -1,5 +1,5 @@
 const Database = require('better-sqlite3-with-prebuilds');
-const moduleErr = require('../utils/moduleErr');
+//const moduleErr = require('../utils/moduleErr');
 
 class Extension extends Database {
     #path

@@ -1,5 +1,5 @@
-const path = require('path')
-const fs = require('fs');
+const {resolve, sep} = require('node:path')
+const {mkdirSync, readdirSync, writeFile} = require('node:fs');
 const loader = require('./functions/loader.js')
 const searcher = require('./functions/searcher')
 const moduleErr = require('../utils/moduleErr.js')
@@ -57,7 +57,7 @@ class DatabaseManager {
 
     if (pathway) {
       try {
-        fs.mkdirSync(path.resolve(pathway, name));
+        mkdirSync(resolve(pathway, name));
       } catch (err) {
         if (force) return;
       }
@@ -299,18 +299,18 @@ class DatabaseManager {
     if (!pathway)
       throw new moduleErr("Añade la ruta donde crear una nueva base de datos");
     if (!name) name = "";
-    pathway = path.resolve(pathway);
+    pathway = resolve(pathway);
 
     try {
-      fs.readdirSync(pathway);
+      readdirSync(pathway);
     } catch (e) {
       throw new moduleErr(
         `A ocurrido un error. El error más común es una ruta mal puesta, más información:\n${e.message}`
       );
     }
 
-    fs.writeFile(
-      pathway + path.sep + (!name.endsWith(".sqlite") ? name + ".sqlite" : name),
+    writeFile(
+      pathway + sep + (!name.endsWith(".sqlite") ? name + ".sqlite" : name),
       "",
       function (err) {
         if (err)
@@ -322,7 +322,7 @@ class DatabaseManager {
 
     return {
       sucess: true,
-      pathway: path.resolve(pathway + path.sep + (!name.endsWith(".sqlite") ? name + ".sqlite" : name)),
+      pathway: resolve(pathway + sep + (!name.endsWith(".sqlite") ? name + ".sqlite" : name)),
     };
   }
 

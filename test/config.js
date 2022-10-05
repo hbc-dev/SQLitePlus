@@ -1,4 +1,4 @@
-const {resolve} = require('path')
+const {resolve} = require('node:path')
 const ManagerConfig = require('../src/ManagerConfig')
 
 const config = new ManagerConfig({

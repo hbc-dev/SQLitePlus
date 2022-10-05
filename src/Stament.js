@@ -1,5 +1,5 @@
 const moduleErr = require('../utils/moduleErr.js'),
-      lodashArray = require('lodash'),
+      {isEqual} = require('lodash'),
       types = {
         object: 'TEXT',
         string: 'TEXT',
@@ -168,7 +168,7 @@ class Stament {
           ]
         }
 
-        if (lodashArray.isEqual(array.fromDB, array.toSearch)) {
+        if (isEqual(array.fromDB, array.toSearch)) {
         coincidences.push(info.fromDB.id)
         checker = true
     }

@@ -1,9 +1,9 @@
-const path = require('path')
-const fs = require('fs')
+const {resolve, sep} = require('node:path')
+const {readFileSync, readdirSync, existsSync, writeFileSync} = require('node:fs')
 const moduleErr = require('../../utils/moduleErr.js')
 const Database = require('../PropertiesExtension.js')
 const getFolder = require('./getFolder.js')
-const crypto = require('crypto')
+const {randomBytes} = require('node:crypto')
 
 function loader(options, paths, config, manager) {
   const pathway = {}
@@ -27,7 +27,7 @@ function loader(options, paths, config, manager) {
     name = name ?? [`NONAME`];
 
     if (pathway[name[0]]) return;
-    pathway[name[0]] = path.resolve(item)
+    pathway[name[0]] = resolve(item)
     //get all the resolve paths
   });
 
@@ -51,7 +51,7 @@ function loader(options, paths, config, manager) {
 
           for (let x of keys) {
             try {
-              fs.readFileSync(pathway[x])
+              readFileSync(pathway[x])
             } catch(err) {
               let props = pathway[x];
 
@@ -66,9 +66,9 @@ function loader(options, paths, config, manager) {
                     : props.forceLoad
                     ? process.cwd()
                     : undefined) +
-                  `${path.sep + (x.match(/(?:NONAME_.*|NONAME)/gm) ? "" : x)}.sqlite`;
+                  `${sep + (x.match(/(?:NONAME_.*|NONAME)/gm) ? "" : x)}.sqlite`;
                 
-                if (!fs.existsSync(pathway[x])) fs.writeFileSync(pathway[x], '')
+                if (!existsSync(pathway[x])) writeFileSync(pathway[x], '')
               } else throw new moduleErr(`Ha habido un error al acceder a los archivos. Error completo:\n${err.message}`)
             }
 
@@ -82,7 +82,7 @@ function loader(options, paths, config, manager) {
               loaded.files[file.name].inFolder = false
               loaded.files[file.name].fileName = file.name
               loaded.files[file.name].Path = file.path
-              loaded.files[file.name].Id = crypto.randomBytes(16).toString('hex')
+              loaded.files[file.name].Id = randomBytes(16).toString('hex')
 
               if (config[file.name]?.models) {
                 manager.db = loaded.files[file.name];
@@ -123,7 +123,7 @@ function loader(options, paths, config, manager) {
 
         if (props && previousPaths.includes(props)) continue;
 
-        dir = fs.readdirSync(props);
+        dir = readdirSync(props);
         pathway[x] = props
         previousPaths.push(props);
       } catch(err) {
@@ -160,11 +160,11 @@ function loader(options, paths, config, manager) {
               let fileName = file.replace(/\.sqlite$/gm, '')
               fileName = fileName == '' ? `NONAME_${object.name}` : fileName
 
-                files[fileName] = new Database(path.resolve(object.path, file))
+                files[fileName] = new Database(resolve(object.path, file))
                 files[fileName].inFolder = object.name
                 files[fileName].fileName = fileName
-                files[fileName].Path = path.resolve(object.path, file)
-                files[fileName].Id = crypto.randomBytes(16).toString("hex")
+                files[fileName].Path = resolve(object.path, file)
+                files[fileName].Id = randomBytes(16).toString("hex")
 
                 if (config[fileName]?.models) {
                   manager.db = files[fileName];
