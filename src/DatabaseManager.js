@@ -6,6 +6,7 @@ const moduleErr = require('../utils/moduleErr.js')
 const Stament = require('./Stament.js')
 const searchConfig = require('./functions/config.js')
 const reloadDatabase = require('./functions/reloadDatabase.js');
+const checkKeys = require('./functions/checkKeys.js')
 
 class DatabaseManager {
   //private
@@ -483,8 +484,49 @@ class DatabaseManager {
     if (!db) throw new moduleErr("Añade una base de datos sobre la que actuar");
     if (object.length <= 1) throw new moduleErr("Faltan datos");
 
-    if (typeof object[0] !== "string")
+    let tableName = object[0];
+    let data = object[1];
+    let finalObject = {};
+
+    if (typeof tableName !== "string")
       throw new moduleErr("Se esparaba como nombre de la table un string");
+
+    if (!data || typeof data !== "object" || Array.isArray(data)) {
+      if (!data || rows.length < 1) {
+        data = db.prepare(`SELECT dflt_value, name FROM pragma_table_info('${tableName}')`).all();
+        
+        for (let {dflt_value, name} of data) {
+          let defaultValue = JSON.parse(dflt_value.replace(/\'/gm, ""));
+
+          finalObject[name] = defaultValue;
+        }
+      } else throw new moduleErr("Se esperaba como data un objecto");
+    } else {// is object
+      let rows = Object.keys(data);
+
+      for (let row of rows) {
+        let model = db.prepare(`SELECT dflt_value, name FROM pragma_table_info('${tableName}') WHERE name='${row}'`).get();
+        if (!model) continue;
+
+        let defaultValue = JSON.parse(model.dflt_value.replace(/\'/gm, ""));
+        
+        if (defaultValue && typeof defaultValue == 'object' && !Array.isArray(defaultValue)) {
+          if (!data[row] || typeof data[row] !== 'object')
+            throw new moduleErr(`Se ha intentado introducir ${typeof data[row]} o undefined/null en una fila de tipo object: ${row}`)
+        
+          finalObject[model.name] = checkKeys(data[row], defaultValue);
+          continue;
+        }
+
+        if (data[row] && typeof data[row] == 'object' && typeof defaultValue !== 'object')
+          throw new moduleErr(`Se ha intentado introducir un object en un tipo ${typeof defaultValue}: ${row}`)
+
+        finalObject[model.name] = data[row]
+      }
+    }
+
+    const stament = new Stament([tableName, finalObject])
+    db.prepare(stament.create('ADD_DATA')).run();
   }
 }
 

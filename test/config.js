@@ -12,9 +12,10 @@ config.addDatabase('db', {
       "Usuarios",
       {
         myUser: {
-          name: null,
-          siuu: null
-        }
+          info: {name: 'user', mail: null, lastname: null},
+          siuu: {xd: 'xd'}
+        },
+        myGuild: 'XD'
       }
     ],
     [
@@ -23,7 +24,8 @@ config.addDatabase('db', {
         myGuild: 'XD',
         data: {
           name: 'LOL'
-        }
+        },
+        lmao: []
       }
     ],
     [
@@ -33,7 +35,7 @@ config.addDatabase('db', {
           name: null,
           data: {
             year: 2022,
-            day: undefined
+            day: null
           }
         }
       }

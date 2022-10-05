@@ -4,11 +4,6 @@ const moduleErr = require('../utils/moduleErr.js'),
         object: 'TEXT',
         string: 'TEXT',
         number: 'INTEGER'
-      },
-      defaultConfig = {
-        createIfNotExists: true,
-        types: false,
-        followModel: true,
       }
 
 /*
@@ -30,8 +25,7 @@ class Stament {
       let base = `CREATE TABLE ${!this.rest?.createIfNotExists ? 'IF NOT EXISTS' : ''} ${this.table}(`//la base de la sentencia de sql
 
       for (let column of Object.keys(this.data)) {
-        if (typeof this.data !== 'object') base = base+`${column} ${types[typeof this.data] || 'BLOB'} DEFAULT ${this.data},`
-        else base = base+`${column} ${types[typeof this.data[column]] || 'BLOB'} DEFAULT '${JSON.stringify(this.data[column])}',`
+        base = base+`${column} ${types[typeof this.data[column]] || 'BLOB'} DEFAULT '${JSON.stringify(this.data[column])}',`
       }
 
       return base.replace(/,$/gm, '')+')'
@@ -44,7 +38,7 @@ class Stament {
 
       for (let column of Object.keys(this.data)) {
         data = data+`${column},`
-        final = final+`'${JSON.stringify(this.data[column])}'`
+        final = final+`'${JSON.stringify(this.data[column])}',`
       }
 
       return base+data.replace(/,$/gm, '')+') '+final.replace(/,$/gm, '')+')'
@@ -108,7 +102,7 @@ class Stament {
     array.push(key)
 
     if (Array.isArray(data[key])) array.push(data[key])
-    else if (typeof data[key] == 'object' && data[key]) array.push('::Object::') && rawData.push([key, data[key], position, key, this.idGenerator])
+    else if (data[key] && typeof data[key] == 'object') array.push('::Object::') && rawData.push([key, data[key], position, key, this.idGenerator])
     else array.push(data[key])
 
     array.push({position: 0, in: false, column: key, values: data[key], id: this.idGenerator})
@@ -133,18 +127,18 @@ class Stament {
 }
 
   rawDataConvert(raw) {
-  let unResolved = [],
-      resolvedRaw = []
+    let unResolved = [],
+        resolvedRaw = []
 
-  for (let item of raw.values()) {
-    let keys = Object.keys(item[1])
+    for (let item of raw.values()) {
+      let keys = Object.keys(item[1])
 
-    for (let key of keys) {
-      let value = item[1][key]
+      for (let key of keys) {
+        let value = item[1][key]
 
-      if (typeof value == 'object' && !Array.isArray(value)) unResolved.push([key, value, item[2]+1, item[3], item[4]]) && resolvedRaw.push([key, '::Object::', {position: item[2]+1, in: item[0], column: item[3], id: item[4]}])
-      else resolvedRaw.push([key, item[1][key], {position: item[2]+1, in: item[0], column: item[3], id: item[4]}])
-    }
+        if (value && typeof value == 'object' && !Array.isArray(value)) unResolved.push([key, value, item[2]+1, item[3], item[4]]) && resolvedRaw.push([key, '::Object::', {position: item[2]+1, in: item[0], column: item[3], id: item[4]}])
+        else resolvedRaw.push([key, item[1][key], {position: item[2]+1, in: item[0], column: item[3], id: item[4]}])
+      }
   }
 
   return {resolved: resolvedRaw, peding: unResolved}

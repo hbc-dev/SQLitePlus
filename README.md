@@ -312,6 +312,53 @@ const Models = require('./Models.js')
 myManager.createTables(...Models)// => sucess!
 ```
 
+## `get(object)`
+Obtén datos específicos de la base de datos.
+
+| Propiedades | Descripción
+| -- | --
+| object* | Un array con la query completa
+
+> object*: recibe como primer parámetro un string con el nombre de la tabla sobre la cuál se va a buscar y como segundo parámetro un objeto con la query.
+
+```js
+db.get([
+  "Users",
+  {
+    id: 123,
+    name: '167',
+  }
+]);// => sucess!
+
+/*
+{
+  id: 123,
+  name: '167',
+  roles: ["rol1", "rol2"]
+}
+*/
+```
+
+## `insert(object)`
+Inserta datos en la base de datos.
+
+| Propiedades | Descripción
+| -- | --
+| object* | Un array con la query completa
+
+> object*: recibe como primer parámetro un string con el nombre de la tabla sobre la cuál se va a actuar y como segundo parámetro un objeto con la query. El segundo dato puede estar vacio mediante `null` y se insertarán los datos por defectos establecidos.
+
+```js
+db.insert([
+  "Users",
+  {
+    id: 600,
+    name: 'A name',
+  }
+]);// => sucess!
+``` 
+
+
 ## `close(Options)`
 Cierra la base de datos. Contiene opciones extra de personalización y manejo.
 
