@@ -1,6 +1,6 @@
 {
   "name": "sqliteplus",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "A simple SQLite3 synchronous module",
   "main": "src/DatabaseManager.js",
   "scripts": {

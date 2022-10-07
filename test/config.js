@@ -1,5 +1,5 @@
 const {resolve} = require('node:path')
-const ManagerConfig = require('../src/ManagerConfig')
+const {ManagerConfig} = require('../src/DatabaseManager')
 
 const config = new ManagerConfig({
   defaultFileStorage: __dirname,

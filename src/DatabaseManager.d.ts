@@ -1,3 +1,5 @@
+import ManagerConfig from './ManagerConfig';
+
 type managerData = {
     /**Carga carpertas*/
     folder?: boolean = false;
@@ -106,7 +108,7 @@ type closeOptions = {
  * @class Crea una instancia de un manejador
  * @example const manager = new DatabaseManager({file: true, configPath: './config.js'}, 'extraDb.sqlite');
  */
-export = class DatabaseManager {
+export class DatabaseManager {
     /**
      * @class Crea una instancia de un manejador
      * @example const manager = new DatabaseManager({file: true, configPath: './config.js'}, 'extraDb.sqlite');
@@ -225,3 +227,5 @@ export = class DatabaseManager {
      */
      delete(object: [string, object]): any;
 }
+
+export {ManagerConfig as ManagerConfig}

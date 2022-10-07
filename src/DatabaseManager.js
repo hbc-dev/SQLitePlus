@@ -7,6 +7,7 @@ const Stament = require('./Stament.js')
 const searchConfig = require('./functions/config.js')
 const reloadDatabase = require('./functions/reloadDatabase.js');
 const checkKeys = require('./functions/checkKeys.js')
+const ManagerConfig = require('./ManagerConfig')
 
 class DatabaseManager {
   //private
@@ -614,4 +615,4 @@ class DatabaseManager {
   }
 }
 
-module.exports = DatabaseManager;
+module.exports = {DatabaseManager, ManagerConfig};
