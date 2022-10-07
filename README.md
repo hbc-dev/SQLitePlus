@@ -377,6 +377,25 @@ db.update([
     name: "Godofredo"
   }
 ]);// => sucess!
+```
+
+## `delete(object)`
+Elimina datos en la base de datos.
+
+| Propiedades | Descripción
+| -- | --
+| object* | Un array con la query completa
+
+> object*: recibe como primer parámetro un string con el nombre de la tabla sobre la cuál se va a actuar y como segundo parámetro un objeto con la query. El segundo dato puede estar vacio mediante `null` y se eliminarán los datos por defecto establecidos.
+
+```js
+db.delete([
+  "Users",
+  {
+    name: 'Godofredo',
+    id: 600,
+  }
+]);// => sucess!
 ``` 
 
 ## `close(Options)`

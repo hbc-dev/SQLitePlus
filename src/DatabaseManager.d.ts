@@ -217,4 +217,11 @@ export = class DatabaseManager {
      * @example <db>.update(['Table', filter, newData])
      */
     update(object: [string, object, object]): any;
+
+    /**
+     * Elimina datos en una tabla específica
+     * @param object Los datos a actualizar
+     * @example <db>.delete(['Table', {row: "myValue"}])
+     */
+     delete(object: [string, object]): any;
 }

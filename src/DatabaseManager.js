@@ -482,6 +482,7 @@ class DatabaseManager {
     let db = this.db;
 
     if (!db) throw new moduleErr("Añade una base de datos sobre la que actuar");
+    if (!Array.isArray(object)) throw new moduleErr(`Se esperaba un array`);
     if (object.length <= 1) throw new moduleErr("Faltan datos");
 
     let tableName = object[0];
@@ -496,7 +497,7 @@ class DatabaseManager {
         data = db.prepare(`SELECT dflt_value, name FROM pragma_table_info('${tableName}')`).all();
         
         for (let {dflt_value, name} of data) {
-          let defaultValue = JSON.parse(dflt_value.replace(/\'/gm, ""));
+          let defaultValue = JSON.parse(dflt_value.replace(/^'|'$/gm, "").replace(/\'\'/gm, "'"));
 
           finalObject[name] = defaultValue;
         }
@@ -536,6 +537,7 @@ class DatabaseManager {
     let db = this.db;
 
     if (!db) throw new moduleErr("Añade una base de datos sobre la que actuar");
+    if (!Array.isArray(object)) throw new moduleErr(`Se esperaba un array`);
     if (object.length <= 1) throw new moduleErr("Faltan datos");
 
     let tableName = object[0];
@@ -586,6 +588,29 @@ class DatabaseManager {
 
     const stament = new Stament([tableName, finalObject, getter]);
     db.prepare(stament.create("EDIT_DATA")).run();
+  }
+
+  delete(object) {
+    let db = this.db;
+
+    if (!db) throw new moduleErr("Añade una base de datos sobre la que actuar");
+    if (!Array.isArray(object)) throw new moduleErr(`Se esperaba un array`);
+    if (object.length <= 1) throw new moduleErr("Faltan datos");
+
+    let tableName = object[0];
+    let data = object[1];
+
+    if (typeof tableName !== "string")
+      throw new moduleErr("Se esparaba como nombre de la table un string");
+
+    if (typeof data !== "object" || Array.isArray(data))
+      throw new moduleErr(`Se esperaba como query un objecto`);
+
+    let getter = this.get([tableName, data])
+    if (!getter) throw new moduleErr(`No se han encontrado parámetros semejantes a la query`);
+
+    const stament = new Stament([tableName, getter]);
+    db.prepare(stament.create('DELETE_DATA')).run();
   }
 }
 

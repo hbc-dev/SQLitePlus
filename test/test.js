@@ -5,22 +5,17 @@ const DatabaseManager = require('../src/DatabaseManager'),
 
 const db = new DatabaseManager({ folder: true, configPath: "./config.js" });
 
-//db.insert(["Usuarios", { myUser: { info: { name: "The quotes man's" } } }]);
+db.insert(["Usuarios", {myUser: {info: {name: "tetas '''"}}}]);
 
-let filter = {myGuild: "I can push quotes '''"}
+let filter = {
+  myUser: {
+    info: {
+      name: "tetas '''"
+    }
+  },
+}
 
-db.update([
+db.delete([
   "Usuarios",
   filter,
-  null
 ]);
-
-// db.update([
-//   "Usuarios",
-//   filter,
-//   {
-//     myUser: {
-//       info: {name: "The quotes man's"}
-//     }
-//   }
-// ])1

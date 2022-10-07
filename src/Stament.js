@@ -57,6 +57,17 @@ class Stament {
       return base+data.replace(/,$/gm, '')+final.replace(/AND $/gm, '')+`LIMIT 1`
     }
 
+    if (type == 'DELETE_DATA') {
+      let base = `DELETE FROM ${this.table} WHERE `;
+      let data = '';
+
+      for (let column of Object.keys(this.data)) {
+        data = data+`${column}='${JSON.stringify(this.data[column]).replace(/\'/gm, `''`)}' AND `
+      }
+
+      return base+data.replace(/AND $/gm, '')+`LIMIT 1`
+    }
+
     if (type == 'GET_DATA') {
       let base = `SELECT * FROM ${this.table}`//la base de la sentencia de sql
 
