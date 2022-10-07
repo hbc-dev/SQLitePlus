@@ -210,4 +210,11 @@ export = class DatabaseManager {
      * @example <db>.insert(['Table', {row: 'myValue'}])
      */
     insert(object: [string, object]): any;
+
+    /**
+     * Edita datos en una tabla específica
+     * @param object Los datos a actualizar
+     * @example <db>.update(['Table', filter, newData])
+     */
+    update(object: [string, object, object]): any;
 }

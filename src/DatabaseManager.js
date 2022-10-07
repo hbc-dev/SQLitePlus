@@ -506,14 +506,14 @@ class DatabaseManager {
 
       for (let row of rows) {
         let model = db.prepare(`SELECT dflt_value, name FROM pragma_table_info('${tableName}') WHERE name='${row}'`).get();
-        if (!model) continue;
+        if (!model) throw new moduleErr(`La fila "${row}" no existe`)
 
         let defaultValue = JSON.parse(model.dflt_value.replace(/\'/gm, ""));
         
         if (defaultValue && typeof defaultValue == 'object' && !Array.isArray(defaultValue)) {
           if (!data[row] || typeof data[row] !== 'object')
             throw new moduleErr(`Se ha intentado introducir ${typeof data[row]} o undefined/null en una fila de tipo object: ${row}`)
-        
+          
           finalObject[model.name] = checkKeys(data[row], defaultValue);
           continue;
         }
@@ -525,8 +525,67 @@ class DatabaseManager {
       }
     }
 
+    if (Object.keys(finalObject).length < 1)
+      throw new moduleErr(`Los datos que se intentan insertar no coinciden con el modelo`)
+
     const stament = new Stament([tableName, finalObject])
     db.prepare(stament.create('ADD_DATA')).run();
+  }
+
+  update(object) {
+    let db = this.db;
+
+    if (!db) throw new moduleErr("Añade una base de datos sobre la que actuar");
+    if (object.length <= 1) throw new moduleErr("Faltan datos");
+
+    let tableName = object[0];
+    let filter = object[1];
+    let update = object[2];
+    let finalObject = {};
+
+    if (typeof tableName !== "string")
+      throw new moduleErr("Se esparaba como nombre de la table un string");
+
+    if (typeof filter !== 'object' || Array.isArray(filter))
+      throw new moduleErr(`Se esperaba como filter un objecto`)
+
+    let getter = this.get([tableName, filter])
+    if (!getter) throw new moduleErr(`No se han encontrado parámetros semejantes al filter`)
+
+    if (!update || typeof update !== "object" || Array.isArray(update)) {
+      if (!update || rows.length < 1) {
+        update = db.prepare(`SELECT dflt_value, name FROM pragma_table_info('${tableName}')`).all();
+        
+        for (let {dflt_value, name} of update) {
+          let defaultValue = JSON.parse(dflt_value.replace(/\'/gm, ""));
+
+          finalObject[name] = defaultValue;
+        }
+      } else throw new moduleErr("Se esperaba como data un objecto");
+    } else {
+      let rows = Object.keys(update);
+
+      for (let row of rows) {
+        if (getter[row] && typeof getter[row] == 'object') {
+          if (!update[row] || typeof update[row] !== 'object')
+            throw new moduleErr(`Se ha intentado introducir ${typeof update[row]} o undefined/null en una fila de tipo object: ${row}`)
+          
+          finalObject[row] = checkKeys(update[row], getter[row]);
+          continue;
+        }
+
+        if (update[row] && typeof update[row] == 'object' && typeof getter[row] !== 'object')
+          throw new moduleErr(`Se ha intentado introducir un object en un tipo ${typeof getter}: ${row}`)
+
+        finalObject[row] = update[row]
+      }
+    }
+
+    if (Object.keys(finalObject).length < 1)
+      throw new moduleErr(`No ha sido posible actualizar la fila porque no se han encontrado coincidencias`)
+
+    const stament = new Stament([tableName, finalObject, getter]);
+    db.prepare(stament.create("EDIT_DATA")).run();
   }
 }
 

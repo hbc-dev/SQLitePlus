@@ -358,6 +358,26 @@ db.insert([
 ]);// => sucess!
 ``` 
 
+## `update(object)`
+Actualiza datos en la base de datos.
+
+| Propiedades | Descripción
+| -- | --
+| object* | Un array con la query completa
+
+> object*: recibe como primer parámetro un string con el nombre de la tabla sobre la cuál se va a actuar, como segundo parámetro un objeto con el filtro y como último parámetro los nuevos datos. El tercer dato puede estar vacio mediante `null` y se insertarán los datos por defectos establecidos.
+
+```js
+db.update([
+  "Users",
+  {
+    id: 600,
+  },
+  {
+    name: "Godofredo"
+  }
+]);// => sucess!
+``` 
 
 ## `close(Options)`
 Cierra la base de datos. Contiene opciones extra de personalización y manejo.
