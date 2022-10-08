@@ -439,7 +439,7 @@ class DatabaseManager {
         searched = searched.data.filter((x) => x[2].id == id);
       } else searched = searched.data;
 
-      for (let data of searched.filter((x) => x[2].values).values()) {
+      for (let data of searched.filter((x) => x[2].values || typeof x[2].values == 'object' && x[2].values == null).values()) {
         object[data[0]] = data[2].values;
       }
 
