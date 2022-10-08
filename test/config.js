@@ -5,28 +5,34 @@ const config = new ManagerConfig({
   defaultFileStorage: __dirname,
   defaultPoint: "test/db OR test/NONAME_test OR db OR NONAME OR :memory:",
 });
-config.addDatabase('db', {
+config.addDatabase("db", {
   createIfNotExists: true,
   models: [
     [
       "Usuarios",
       {
         myUser: {
-          info: {name: 'user', mail: null, lastname: null},
-          siuu: {xd: 'xd'}
+          info: { name: "user", mail: null, lastname: null },
+          siuu: { xd: "xd" },
         },
-        myGuild: `I can push quotes '''`
-      }
+        myGuild: `I can push quotes '''`,
+      },
+      {
+        createIfNotExists: true,
+      },
     ],
     [
       "Guilds",
       {
-        myGuild: 'XD',
+        myGuild: "XD",
         data: {
-          name: 'LOL'
+          name: "LOL",
         },
-        lmao: []
-      }
+        lmao: [],
+      },
+      {
+        createIfNotExists: true,
+      },
     ],
     [
       "Test",
@@ -35,52 +41,65 @@ config.addDatabase('db', {
           name: null,
           data: {
             year: 2022,
-            day: null
-          }
-        }
-      }
-    ]
-  ]
+            day: null,
+          },
+        },
+      },
+      {
+        createIfNotExists: true,
+      },
+    ],
+  ],
 });
 
-config.addDatabase('NONAME_test', {
+config.addDatabase("NONAME_test", {
   createIfNotExists: true,
   forceLoad: true,
   close: false,
   models: [
     [
-      'Container',
+      "Container",
       {
         pointerKey: null,
-        data: null
-      }
-    ]
-  ]
+        data: null,
+      },
+      {
+        createIfNotExists: true,
+      },
+    ],
+  ],
 });
 
-config.addDatabase('myDB', {
+config.addDatabase("myDB", {
   createIfNotExists: true,
   forceLoad: true,
   models: [
     [
-      'Users',
+      "Users",
       {
         points: 0,
         id: null,
-        username: null
-      }
+        username: null,
+      },
+      {
+        createIfNotExists: true,
+      },
     ],
     [
-      'Pointer',
+      "Pointer",
       {
         key: null,
-        data: null
-      }
-    ]
-  ]
+        data: null,
+      },
+      {
+        createIfNotExists: true,
+      },
+    ],
+  ],
 });
 
 config.cloneDatabase({name: 'NONAME', clone: 'NONAME_test'})
+
 module.exports = config;
 
 /*

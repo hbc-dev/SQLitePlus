@@ -84,7 +84,8 @@ function loader(options, paths, config, manager) {
               loaded.files[file.name].Path = file.path
               loaded.files[file.name].Id = randomBytes(16).toString('hex')
 
-              if (config?.[file.name]?.models) {
+              if (config?.[file.name]?.models && config?.[file.name]?.models?.length > 1) {
+                console.log(config?.[file.name]?.models);
                 manager.db = loaded.files[file.name];
                 manager.createTables(...config[file.name].models)
               }
@@ -171,7 +172,7 @@ function loader(options, paths, config, manager) {
                 files[fileName].Path = resolve(object.path, file)
                 files[fileName].Id = randomBytes(16).toString("hex")
 
-                if (config?.[fileName]?.models) {
+                if (config?.[fileName]?.models && config?.[fileName]?.models?.length > 1) {
                   manager.db = files[fileName];
                   manager.createTables(...config[fileName].models);
                 }

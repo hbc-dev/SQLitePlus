@@ -104,6 +104,10 @@ type closeOptions = {
     db: string;
 }
 
+type modelOptions = {
+    createIfNotExists: boolean = true,
+}
+
 /**
  * @class Crea una instancia de un manejador
  * @example const manager = new DatabaseManager({file: true, configPath: './config.js'}, 'extraDb.sqlite');
@@ -204,7 +208,7 @@ export class DatabaseManager {
      * @param object Las tablas
      * @example <db>.createTables(...[['Users', {id: null}]])
      */
-    createTables(...object: Array<[string, object]>): any;
+    createTables(...object: Array<[string, object, modelOptions]>): any;
 
     /**
      * Inserta datos en una tabla específica

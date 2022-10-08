@@ -4,6 +4,3 @@ const {DatabaseManager} = require('../src/DatabaseManager'),
 
 
 const db = new DatabaseManager({ folder: true, configPath: "./config.js" });
-
-db.addFolders('.')
-console.log(db)

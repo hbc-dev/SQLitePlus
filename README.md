@@ -7,6 +7,7 @@ SQLite Plus es un manejador de bases de datos SQLite simple orientado a objetos,
 También puedes hacer `npm i https://github.com/167BOT/sqliteplus.git` para descargarlo desde la página de Github del proyecto.
 
 # Clase `DatabaseManager(Options, Folders/Paths)`
+Genera un manejador para poder administrar bases de datos SQLite.
 | Propiedades | Descripción |
 | -- | -- |
 | Options | Opciones para el manejo |
@@ -419,7 +420,7 @@ myManager.close({
 }).then(x => console.log(x))// => Properly open!
 ```
 
-## `Open(Options)`
+## `open(Options)`
 Abre la base de datos. Contiene opciones extra de personalización y manejo.
 
 |Propiedades | Descripción
@@ -439,4 +440,167 @@ myManager.open({
   db: 'relacional/Extra'
 }).then().then(x => console.log(x))// => Properly closed!
 ```
+
+# Clase `ManagerConfig(Options)`
+Genera una configuración para cargarla en el arranque.
+| Propiedades | Descripción
+| - | -
+| Options | Las opciones de la configuración
+
+| Options | Descripción
+| -- | --
+| defaultPoint | Es el punto por defecto donde el manejador mirará para setear una base de datos sobre la que actuar
+| defaultFileStorage | Es el punto por defecto donde el manejador mirará donde se encuentra x base de datos si no es especificado su dirección
+| databases | Los modelos de las bases de datos
+
+```js
+const {ManagerConfig} = require('sqliteplus');
+
+const manager = new ManagerConfig({
+  defaultPoint: 'test/db OR db OR :memory:',
+  defaultFileStorage: __dirname,
+  databases: {
+    db: Options
+  }
+});
+```
+
+# Funciones
+La clase contiene funciones variadas y útiles para poder manejar tu configuración de la base de datos.
+
+## `addDatabase(Name, Options)`
+Genera el modelo de una base de datos.
+
+| Propiedades | Descripción
+| - | -
+| Name | El nombre del modelo
+| Options | Las opciones del modelo
+
+| Options | Descripción
+| - | -
+| createIfNotExists | Crea la base de datos si no existe. También crea tablas si no existen
+| path | La dirección donde se encuentra la base de datos en tu proyecto
+| close | Añade la base de datos cerrada por defecto
+| Models | Los modelos de la base de datos
+| forceLoad | Obliga a añadir la base de datos como pueda
+
+| Models | Descripción
+| - | -
+`[Name, Model, ModelOptions][]` | La estructura del modelo
+
+| ModelOptions | Descripción
+| - | -
+| createIfNotExists | Crea la tabla si no existe
+
+```js
+config.addDatabase("db", {
+  forceLoad: true,
+  models: [
+    [
+      "User",
+      {
+        name: null,
+        id: null
+      },
+      {
+        createIfNotExists: true
+      }
+    ]
+  ]
+});
+```
+
+## `cloneDatabase(Options)`
+Clona un modelo con un nombre diferente.
+| Propiedades | Descripción
+| - | -
+| Options | Las opciones del modelo
+
+| Options | Descripción
+| - | -
+| name | El nombre del clon
+| clone | El nombre del modelo a clonar
+| force | Fuerza a clonar el modelo
+
+```js
+config.clone({name: 'otherDB', clone: 'db'});
+```
+
+## `editDatabase(Name, Options)`
+Edita un modelo con un nombre.
+
+Clona un modelo con un nombre diferente.
+
+| Propiedades | Descripción
+| - | -
+| Name | El nombre del modelo a editar
+| Options | Las opciones del modelo
+
+| Options | Descripción
+| - | -
+| createIfNotExists | Crea la base de datos si no existe. También crea tablas si no existen
+| path | La dirección donde se encuentra la base de datos en tu proyecto
+| close | Añade la base de datos cerrada por defecto
+| Models | Los modelos de la base de datos
+| forceLoad | Obliga a añadir la base de datos como pueda
+
+| Models | Descripción
+| - | -
+`[Name, Model, ModelOptions][]` | La estructura del modelo
+
+| ModelOptions | Descripción
+| - | -
+| createIfNotExists | Crea la tabla si no existe
+
+```js
+config.editDatabase('otherDB', {
+  forceLoad: false,
+  createIfNotExists: true,
+});
+```
+
+## `removeDatabase(Name)`
+Elimina modelos de la configuración
+
+| Propiedades | Descripción
+| - | -
+| Name | El nombre del modelo a eliminar
+
+```js
+config.removeDatabase('db');
+```
+
+## `removeDatabases(...Names)`
+Elimina modelos de la configuración
+
+| Propiedades | Descripción
+| - | -
+| Names | Los nombres de los modelos a eliminar
+
+```js
+config.removeDatabases('db', 'secondDB', 'etcDb');
+```
+
+## `setDefaultFileStorage(Path)`
+Elige el punto de almacenamiento de bases de datos.
+
+| Propiedades | Descripción
+| - | -
+| Path | La dirección de la carpeta
+
+```js
+config.setDefaultFileStorage(__dirname)
+```
+
+## `setDefaultPoint(Path)`
+Elige la dirección de la base de datos sobre la que actuar principalmente en el arranque.
+
+| Propiedades | Descripción
+| - | -
+| Path | La dirección en el manejador
+
+```js
+config.setDefaultPoint('db OR test/db OR :memory:')
+```
+
 

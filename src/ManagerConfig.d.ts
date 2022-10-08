@@ -2,8 +2,12 @@ type databaseOptions = {
     createIfNotExists: boolean = true,
     path: string;
     close: boolean = false;
-    models: Array<[string, object]> = [];
+    models: Array<[string, object, modelOptions]> = [];
     forceLoad: boolean = false;
+}
+
+type modelOptions = {
+    createIfNotExists: boolean = true,
 }
 
 type databasesKeyOptions = {
@@ -11,7 +15,7 @@ type databasesKeyOptions = {
 }
 
 type ManagerConfigOptions = {
-    defaultConfig: string;
+    //defaultConfig: string;
     defaultPoint: string;
     defaultFileStorage: string;
     databases: databasesKeyOptions
