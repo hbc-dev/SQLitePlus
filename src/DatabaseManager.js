@@ -450,6 +450,10 @@ class DatabaseManager {
 
   all(table) {
     let db = this.db;
+
+    if (!table) throw new moduleErr(`Añade una tabla`)
+    if (typeof table !== 'string') throw new moduleErr(`Se esperaba un string como "table"`)
+
     const myStament = new Stament(table);
     let stament = myStament.create("GET_DATA");
 

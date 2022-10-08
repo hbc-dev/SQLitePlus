@@ -84,12 +84,12 @@ function loader(options, paths, config, manager) {
               loaded.files[file.name].Path = file.path
               loaded.files[file.name].Id = randomBytes(16).toString('hex')
 
-              if (config[file.name]?.models) {
+              if (config?.[file.name]?.models) {
                 manager.db = loaded.files[file.name];
                 manager.createTables(...config[file.name].models)
               }
 
-              if (config[file.name]?.close) {
+              if (config?.[file.name]?.close) {
                 manager.db = loaded.files[file.name];
                 manager.close();
               }
@@ -135,14 +135,19 @@ function loader(options, paths, config, manager) {
       let files = dir.filter(x => x.match(/.\w+$/g) == '.sqlite')
       let reg = new RegExp(/(?:NONAME_.*|NONAME)/gm);
 
-      for (let database of Object.keys(config)) {
-        let checkName = reg.test(database) ? ".sqlite" : database+'.sqlite';
+      if (config) {
+        for (let database of Object.keys(config)) {
+          let checkName = reg.test(database) ? ".sqlite" : database + ".sqlite";
 
-        if (!files.includes(checkName) && (config[database]?.createIfNotExists || config[database]?.forceLoad)) {
-          manager.createDB({pathway: folderPath, name: checkName});
+          if (
+            !files.includes(checkName) &&
+            (config[database]?.createIfNotExists || config[database]?.forceLoad)
+          ) {
+            manager.createDB({ pathway: folderPath, name: checkName });
 
-          files.push(checkName);
-        } else continue;
+            files.push(checkName);
+          } else continue;
+        }
       }
 
       if (files.length < 1) throw new moduleErr(`No se ha encontrado ninguna base de datos en la carpeta`)
@@ -166,12 +171,12 @@ function loader(options, paths, config, manager) {
                 files[fileName].Path = resolve(object.path, file)
                 files[fileName].Id = randomBytes(16).toString("hex")
 
-                if (config[fileName]?.models) {
+                if (config?.[fileName]?.models) {
                   manager.db = files[fileName];
                   manager.createTables(...config[fileName].models);
                 }
 
-                if (config[fileName]?.close) {
+                if (config?.[fileName]?.close) {
                   manager.db = files[fileName];
                   manager.close();
                 }
