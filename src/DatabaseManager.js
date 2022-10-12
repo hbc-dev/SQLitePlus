@@ -1,37 +1,63 @@
-const {resolve, sep} = require('node:path')
-const {mkdirSync, readdirSync, writeFile} = require('node:fs');
-const loader = require('./functions/loader.js')
-const searcher = require('./functions/searcher')
-const moduleErr = require('../utils/moduleErr.js')
-const Stament = require('./Stament.js')
-const searchConfig = require('./functions/config.js')
+const { resolve,   sep                    } = require('node:path');
+const { mkdirSync, readdirSync, writeFile } = require('node:fs');
+
+const loader         = require('./functions/loader.js');
+const searcher       = require('./functions/searcher');
+const moduleErr      = require('../utils/moduleErr.js');
+const Stament        = require('./Stament.js');
+const searchConfig   = require('./functions/config.js');
 const reloadDatabase = require('./functions/reloadDatabase.js');
-const checkKeys = require('./functions/checkKeys.js')
-const ManagerConfig = require('./ManagerConfig')
+const checkKeys      = require('./functions/checkKeys.js');
+const ManagerConfig  = require('./ManagerConfig');
 
 class DatabaseManager {
-  //private
+ 
+  // Private
   #configData;
 
-  constructor(opts = { folder: false, file: false, memory: true }, ...path) {
+  constructor(
+
+    opts = { 
+
+      memory: true,
+
+      folder: false,
+      file:   false
+    },
+
+     ...path
+  ) {
+   
     this.#configData = !opts.configPath ? false : searchConfig(opts.configPath);
 
     let config = this.#configData;
+
     const loaded = loader(opts, path, config, this); //Load db files. Default collecting files
 
     this.data = loaded.memory ?? null;
+
     this.folders = loaded.folders ?? {};
-    this.files = loaded.files ?? {};
+    this.files   = loaded.files   ?? {};
 
     if (config.defaultPoint) this.src = config.defaultPoint;
-    else this.db = null;
+    else                     this.db  = null;
   }
 
-  addFiles(...files) {
+  addFiles(
+  
+    ...files
+  ) {
+
     let newFiles = loader({ file: true }, files)?.files;
 
     if (!this.files) this.files = {};
-    this.files = Object.assign(this.files, newFiles);
+
+    this.files = {
+    
+      ...this.files,
+      
+      newFiles
+    };
   }
 
   addFolders(...folders) {
@@ -103,12 +129,12 @@ class DatabaseManager {
       }
     }
 
-    return ({} = {
-      removedFiles,
-      totalFiles,
-      beforeRemoved,
+    return {
+
+      removedFiles, totalFiles, beforeRemoved,
+
       filesInManager: Object.keys(filesInManager).length,
-    });
+    };
   }
 
   removeFolders({ folders = null, force = false } = {}) {
@@ -619,4 +645,4 @@ class DatabaseManager {
   }
 }
 
-module.exports = {DatabaseManager, ManagerConfig};
+module.exports = { DatabaseManager, ManagerConfig };
