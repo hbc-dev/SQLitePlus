@@ -1,4 +1,5 @@
-type databaseOptions = {
+interface databaseOptions {
+  
     createIfNotExists: boolean = true,
     path: string;
     close: boolean = false;
@@ -6,28 +7,33 @@ type databaseOptions = {
     forceLoad: boolean = false;
 }
 
-type modelOptions = {
+interface modelOptions {
+  
     createIfNotExists: boolean = true,
 }
 
-type databasesKeyOptions = {
+interface databasesKeyOptions {
+
     [key: string]: databaseOptions
 }
 
-type ManagerConfigOptions = {
+interface ManagerConfigOptions {
+ 
     //defaultConfig: string;
     defaultPoint: string;
     defaultFileStorage: string;
     databases: databasesKeyOptions
 }
 
-type cloneDatabaseOptions = {
+interface cloneDatabaseOptions {
+ 
     name: string;
     clone: string;
     force: boolean = false;
 }
 
 export = class ManagerConfig {
+ 
     public defaultPoint: string;
     public defaultFileStorage: string;
     
