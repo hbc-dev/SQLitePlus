@@ -2,103 +2,64 @@ const {resolve} = require('node:path')
 const {ManagerConfig} = require('../src/DatabaseManager')
 
 const config = new ManagerConfig({
-  defaultFileStorage: __dirname,
-  defaultPoint: "test/db OR test/NONAME_test OR db OR NONAME OR :memory:",
-});
-config.addDatabase("db", {
-  createIfNotExists: true,
-  models: [
-    [
-      "Usuarios",
-      {
-        myUser: {
-          info: { name: "user", mail: null, lastname: null },
-          siuu: { xd: "xd" },
-        },
-        myGuild: `I can push quotes '''`,
-      },
-      {
-        createIfNotExists: true,
-      },
-    ],
-    [
-      "Guilds",
-      {
-        myGuild: "XD",
-        data: {
-          name: "LOL",
-        },
-        lmao: [],
-      },
-      {
-        createIfNotExists: true,
-      },
-    ],
-    [
-      "Test",
-      {
-        myGuild: {
-          name: null,
-          data: {
-            year: 2022,
-            day: null,
-          },
-        },
-      },
-      {
-        createIfNotExists: true,
-      },
-    ],
-  ],
+    defaultFileStorage: __dirname,
+    defaultPoint: 'accounts'
 });
 
-config.addDatabase("NONAME_test", {
-  createIfNotExists: true,
-  forceLoad: true,
-  close: false,
-  models: [
-    [
-      "Container",
-      {
-        pointerKey: null,
-        data: null,
-      },
-      {
-        createIfNotExists: true,
-      },
-    ],
-  ],
+config.addDatabase('accounts', {
+    createIfNotExists: true,
+    models: [
+        [
+            "Accounts",
+            {
+                username: null,
+                password: null,
+                mail: null,
+                createdAt: null,
+                token: null,
+                id: null,
+                language: 'en',
+                games: {
+                    game_1: null,
+                    game_2: null,
+                    game_3: null
+                }
+            },
+            {
+                createIfNotExists: true
+            }
+        ],
+        [
+            "GamesCredentials",
+            {
+                gameId: null,
+                accountId: null,
+                inventoryId: null
+            },
+            {
+                createIfNotExists: true
+            }
+        ]
+    ]
 });
 
-config.addDatabase("myDB", {
-  createIfNotExists: true,
-  forceLoad: true,
-  models: [
-    [
-      "Users",
-      {
-        points: 0,
-        id: null,
-        username: null,
-      },
-      {
-        createIfNotExists: true,
-      },
-    ],
-    [
-      "Pointer",
-      {
-        key: null,
-        data: null,
-      },
-      {
-        createIfNotExists: true,
-      },
-    ],
-  ],
+config.addDatabase('games', {
+    createIfNotExists: true,
+    models: [
+        [
+            "Inventory",
+            {
+                gameId: null,
+                objectId: null,
+                count: 0,
+                achievedAt: null
+            },
+            {
+                createIfNotExists: true
+            }
+        ]
+    ]
 });
-
-config.cloneDatabase({name: 'NONAME', clone: 'NONAME_test'})
 
 module.exports = config;
 

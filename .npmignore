@@ -3,5 +3,5 @@ dbesquema.png
 node_modules
 .gitignore
 .npmignore
-./src/Encrypt.js
+src/Encrypt.js
 package-lock.json
