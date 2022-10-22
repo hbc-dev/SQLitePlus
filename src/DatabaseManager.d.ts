@@ -199,9 +199,9 @@ export class DatabaseManager {
     /**
      * Obtén todos los datos de una tabla específica
      * @param table La tabla de la que obtener los datos
-     * @example <db>.all('Table')
+     * @example <db>.all(['Table'])
      */
-    all(table: string): Array<object>
+    all(object: [string, object]): Array<object>
 
     /**
      * Crea tablas en una base de datos

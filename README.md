@@ -313,6 +313,33 @@ const Models = require('./Models.js')
 myManager.createTables(...Models)// => sucess!
 ```
 
+## `all(object)`
+Obtén datos de la base de datos.
+
+| Propiedades | Descripción
+| -- | --
+| object* | Un array con la query completa
+
+> object*: recibe como primer parámetro un string con el nombre de la tabla sobre la cuál se va a buscar y como segundo parámetro un objeto con la query (opcional).
+
+```js
+db.all([
+  "Users",
+  {
+    id: 123,
+    name: '167',
+  }
+]);// => sucess!
+
+/*
+{
+  id: 123,
+  name: '167',
+  roles: ["rol1", "rol2"]
+}
+*/
+```
+
 ## `get(object)`
 Obtén datos específicos de la base de datos.
 
@@ -332,11 +359,13 @@ db.get([
 ]);// => sucess!
 
 /*
-{
-  id: 123,
-  name: '167',
-  roles: ["rol1", "rol2"]
-}
+[
+  {
+    id: 123,
+    name: '167',
+    roles: ["rol1", "rol2"]
+  }
+]
 */
 ```
 
