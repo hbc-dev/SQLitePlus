@@ -432,38 +432,33 @@ class DatabaseManager {
     }
 
     if (searched?.data.length > 0) {
-      let object = {};
+      let object = {}
+      let allObjects = []
 
-      if (searched.repeat) {
+      if (searched.repeat && !myStament.rest?.all) {
         let id = searched.data[0][2].id;
         searched = searched.data.filter((x) => x[2].id == id);
       } else searched = searched.data;
 
-      for (let data of searched.filter((x) => x[2].values || typeof x[2].values == 'object' && x[2].values == null).values()) {
+      let lastId = 0;
+
+      for (let data of searched.filter((x) => x[2].values || x[2].values < 1 || typeof x[2].values == 'object' && x[2].values == null).values()) {
+        if (data[2].id > lastId && myStament.rest?.all) {allObjects.push({...object});lastId++};
+
         object[data[0]] = data[2].values;
       }
 
-      return object;
+      allObjects.push(object)// metemos el último que queda
+
+      return myStament.rest?.all ? allObjects : object;
     } else return searched;
   }
   //debería de agregar un apartado de opciones
 
-  all(table) {
-    let db = this.db;
-
-    if (!table) throw new moduleErr(`Añade una tabla`)
-    if (typeof table !== 'string') throw new moduleErr(`Se esperaba un string como "table"`)
-
-    const myStament = new Stament(table);
-    let stament = myStament.create("GET_DATA");
-
-    if (!db)
-      throw new moduleErr(
-        'Añade una base de datos sobre la que actuar con "db.src = dbName"'
-      );
-    let myData = db.prepare(stament.stament).all();
-
-    return myStament.parseDB(myData);
+  all(object) {
+    object.push({all: true});
+    
+    return this.get(object);
   }
 
   createTables(...object) {
