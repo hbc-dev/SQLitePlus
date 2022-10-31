@@ -440,9 +440,10 @@ class DatabaseManager {
         searched = searched.data.filter((x) => x[2].id == id);
       } else searched = searched.data;
 
-      let lastId = 0;
+      let lastId = searched[0][2].id;
 
       for (let data of searched.filter((x) => x[2].values || x[2].values < 1 || typeof x[2].values == 'object' && x[2].values == null).values()) {
+
         if (data[2].id > lastId && myStament.rest?.all) {allObjects.push({...object});lastId++};
 
         object[data[0]] = data[2].values;
@@ -456,9 +457,18 @@ class DatabaseManager {
   //debería de agregar un apartado de opciones
 
   all(object) {
-    object.push({all: true});
-    
-    return this.get(object);
+    if (object[1]) {
+      object.push({ all: true });
+
+      return this.get(object);
+    } else {
+      let db = this.db;
+
+      if (!db) throw new moduleErr(`Añade una base de datos con "db.src = dbName"`)
+      let stament = new Stament(object);
+
+      return stament.parseDB(db.prepare(stament.create('GET_DATA').stament).all());
+    }
   }
 
   createTables(...object) {

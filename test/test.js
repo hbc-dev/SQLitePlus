@@ -1,6 +1,5 @@
 const {DatabaseManager} = require('../src/DatabaseManager'),
-      Models = require('./models.js'),
-      {test} = require('node:test')
+      Models = require('./models.js')
 
 const db = new DatabaseManager({ file: true, configPath: "./config.js" });
 
@@ -13,10 +12,7 @@ const db = new DatabaseManager({ file: true, configPath: "./config.js" });
 // ]);
 
 // return;
-
-test('test all method', () => {
-    for (let i = 0;i<1000;i++) db.all(["Accounts", {username: "167", id: 999}])
-});
+console.log(db.all(["Accounts"]));
 
 // test('test get method', () => {
 //     for (let i=0;i<1000;i++) db.get([
